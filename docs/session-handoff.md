@@ -1,7 +1,7 @@
-# Session Handoff: Animation Trigger Wiring Complete
+# Session Handoff: Git Repository Setup Complete
 
-> Generated: January 9, 2026 12:20 PM
-> Previous session: Built complete vanilla JS demo with OOB asset swapping
+> Generated: January 9, 2026
+> Previous session: Animation trigger wiring, troubleshooting documentation
 
 ---
 
@@ -14,6 +14,11 @@ Add state-driven character behaviors (boolean/number inputs) and create addition
 ## Current Status
 
 ### Completed This Session
+- **Git Repository Setup**: Initialized git, pushed to GitHub at https://github.com/undeadpickle/reading-buddy-rive-js-demo
+- **Created .gitignore**: Excludes .DS_Store, IDE files, .mcp.json (local config)
+- **Documentation Updates**: Added git commands to CLAUDE.md
+
+### Completed Previous Session
 - **Animation Trigger Fix**: Resolved trigger name mismatch between Rive (`trig_wave`, `trig_jump`) and JS config
 - **Working Animations**: Wave and jump animations now trigger correctly and return to idle
 - **Auto-Blink System**: BlinkLayer cycles through blink animations automatically
@@ -160,8 +165,18 @@ open http://localhost:8080
 # Hard refresh (clear browser cache)
 # Cmd+Shift+R in browser
 
+# Git workflow
+git add -A && git commit -m "message" && git push
+git pull origin main
+
 # No build/test commands - vanilla JS project
 ```
+
+## Repository
+
+- **GitHub:** https://github.com/undeadpickle/reading-buddy-rive-js-demo
+- **Branch:** main
+- **Note:** `.mcp.json` is gitignored - create locally for Rive MCP connection
 
 ---
 
@@ -178,26 +193,29 @@ open http://localhost:8080
 
 ## Quick Start for Next Session
 
-1. Read CLAUDE.md first (especially "Gotchas & Troubleshooting" section)
-2. Start server: `python3 -m http.server 8080`
-3. Open http://localhost:8080 - verify wave/jump animations work
-4. Open reading-buddy.riv in Rive Editor
-5. Start with Task 1 (boolean/number inputs)
-6. Test each change immediately in browser
+1. `git pull origin main` to get latest changes
+2. Read CLAUDE.md first (especially "Gotchas & Troubleshooting" section)
+3. Start server: `python3 -m http.server 8080`
+4. Open http://localhost:8080 - verify wave/jump animations work
+5. Open reading-buddy.riv in Rive Editor
+6. Start with Task 1 (boolean/number inputs)
+7. Test each change immediately in browser
 
 ---
 
 ## Session Metrics
 
+**This session:**
+- Files created: 2 (`.gitignore`, `README.md`)
+- Files modified: 2 (`CLAUDE.md`, `docs/session-handoff.md`)
+- Features completed: Git repository setup, GitHub push
+- Initial commit: 95 files
+
+**Previous session:**
 - Files modified: 2 (`js/config.js`, `CLAUDE.md`)
 - Features completed: Animation trigger system (100% working)
 - Issues resolved: Trigger name mismatch
-- Documentation added: Comprehensive troubleshooting guide
-- Time elapsed: ~45 minutes
-- Browser testing: Chrome DevTools MCP integration successful
 
 ---
 
-**Mission Accomplished!** 🎉
-
-Core animation system now fully functional. Wave and jump animations trigger correctly with smooth return to idle. Ready for state-driven behavior expansion.
+**Status:** Project now version-controlled and hosted on GitHub. Ready for collaborative development and state-driven behavior expansion.

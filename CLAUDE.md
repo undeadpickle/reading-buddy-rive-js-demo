@@ -21,6 +21,20 @@ lsof -ti:8080 | xargs kill -9
 
 No build, bundler, or test commands - this is a vanilla JS project loaded via ES modules.
 
+## Git & Repository
+
+**Repo:** https://github.com/undeadpickle/reading-buddy-rive-js-demo
+
+```bash
+# Standard git workflow
+git add -A && git commit -m "message" && git push
+
+# Pull latest
+git pull origin main
+```
+
+**Note:** `.mcp.json` is gitignored (contains local MCP config). Clone users need to create their own.
+
 ## Rive MCP Connection Check
 
 **At the start of each session**, verify the Rive MCP server is connected by running `mcp__rive__listStateMachines` or `mcp__rive__listLinearAnimations`. If it works, you'll see the BuddyStateMachine and animations (idle, wave, jump, blink).
