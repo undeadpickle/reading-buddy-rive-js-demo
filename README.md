@@ -6,6 +6,7 @@ Interactive animated character demo using [Rive](https://rive.app) with dynamic 
 
 - **11 Character Variants**: catdog-orange, catdog-blue, catdog-green, catdog-purple, catdog-white, kitten-ninja, master-hamster, barloc, george, maddie, scout
 - **Dynamic Asset Swapping**: 11-12 body parts per character loaded via OOB asset system
+- **State-Driven Behaviors**: Boolean inputs (isHappy, isReading) and number input (energyLevel) for interactive character states
 - **Trigger Animations**: Wave and jump animations with smooth transitions back to idle
 - **Auto-Blink System**: Characters blink naturally without manual triggering
 - **Zero Build Process**: Vanilla JavaScript with ES modules - just serve and run
@@ -45,7 +46,7 @@ open http://localhost:8080
 
 ## How It Works
 
-1. **Preload**: All ~130 character PNGs (11-12 parts x 11 variants) are loaded into memory at startup
+1. **Preload**: All ~150 character PNGs (11-12 parts x 11 variants + extras) are loaded into memory at startup
 2. **Initialize**: Rive runtime starts with the default buddy, intercepting OOB asset requests
 3. **Switch**: Selecting a new buddy cleans up the old instance and reinitializes with cached assets
 

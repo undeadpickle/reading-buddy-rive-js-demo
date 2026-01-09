@@ -1,142 +1,144 @@
-# Session Handoff: 4 New Buddy Characters Added
+# Session Handoff: State-Driven Behaviors Implemented
 
-> Generated: January 9, 2026 2:30 PM
-> Previous session: Git repository setup, documentation updates
+> Generated: January 9, 2026 3:45 PM
+> Previous session: 4 new buddy characters added
 
 ---
 
 ## Mission for Next Session
 
-Update README.md to reflect the new 11-buddy count, then add state-driven character behaviors (boolean/number inputs) to expand the reading buddy's personality and interactivity.
+Wire up the energyLevel input to control animation speed or character states, then explore integrating the catdog-orange-mouthshapes variant for speech features.
 
 ---
 
 ## Current Status
 
 ### Completed This Session
-- **4 New Buddy Characters**: Added barloc, george, maddie, and scout to buddy selector
-- **legSeparator Cleanup**: Removed all references to legSeparator (was added by mistake)
-- **Tail System Verified**: Confirmed buddies without tails work correctly (master-hamster, george, maddie)
-- **Documentation Updated**: Updated CLAUDE.md to reflect 11 variants and removed legSeparator mentions
+- **Boolean Inputs**: Added `isHappy` (triggers jump) and `isReading` (triggers wave) with working UI controls
+- **Number Input**: Added `energyLevel` slider (0-100) ready for Rive integration
+- **States UI**: Unhidden States section with checkboxes and slider controls
+- **Rive Integration**: Updated .riv file with new state machine inputs and transitions
 
 ### In Progress
-- Browser testing completed successfully, but changes not yet committed to git
+- energyLevel number input exists but not yet wired to visual effects in Rive
 
 ### Next Priority
-- **Update README.md**: Fix outdated character count (still shows 7 variants, should be 11)
-- **State-Driven Behaviors**: Add boolean inputs (isHappy, isReading) and number input (energyLevel)
-- **Additional Animations**: Create celebrate, think, read animations with proper state transitions
+- **Wire energyLevel**: Connect to animation speed, idle variants, or breathing rate in Rive
+- **Mouthshapes Integration**: Explore catdog-orange-mouthshapes folder for speech features
+- **Additional State Behaviors**: Create more complex state-driven animations
 
 ---
 
 ## Session Retrospective
 
 ### What Worked Well
-- **Config-Driven Buddy System**: Adding new buddies was trivial - just add entry to BUDDIES object with name and hasTail flag
-- **Graceful Asset Handling**: Tail filtering system already handled missing assets elegantly
-- **Todo Tracking**: TodoWrite tool kept tasks organized and visible to user
+- **MVP Approach**: Starting with simple boolean→animation triggers before complex behaviors
+- **Existing Architecture**: JS scaffolding for setBoolean/setNumber was already complete
+- **Rive Data Binding**: Modern approach using View Model properties instead of legacy inputs
 
 ### Edge Cases & Failures
-- **Outdated README**: README.md still references "7 Character Variants" and "84 character PNGs" - now inaccurate
-- **legSeparator Confusion**: File existed in master-hamster folder but was never actually used in code or Rive file
+- **Chrome DevTools MCP**: Connection issues prevented automated browser testing (known issue)
 
 ### Wrong Assumptions
-- **legSeparator Purpose**: Initially thought this was intentional for master-hamster, but user clarified it was added by mistake
+- **Initial Complexity**: Planned complex visual behaviors, but simple animation triggers proved more practical for MVP
 
 ---
 
 ## Project Context
 
 ### Architecture Overview
-Vanilla JS demo with dynamic Rive character animation using OOB (out-of-band) asset swapping. Configuration-driven buddy system allows easy addition of new characters by dropping PNG assets in folders and updating config.
+Vanilla JS demo with Rive character animation using OOB asset swapping. Configuration-driven buddy system with state machine inputs for interactive behaviors. 12 asset folders (11 integrated, 1 experimental).
 
 ### Tech Stack
 - **Frontend:** Vanilla JavaScript (ES Modules)
 - **Animation:** Rive Runtime (@rive-app/canvas@2.21.6 via CDN)
-- **Assets:** ~130 PNG files (11-12 per buddy variant)
+- **Assets:** 152 PNG files across 12 character folders
 - **Server:** Python HTTP server for local development
 - **Build:** None (vanilla JS, no bundling)
 
 ### Key Files
 | File | Purpose |
 |------|---------|
-| `js/config.js` | Central config: buddy variants, triggers, body parts list |
-| `js/asset-loader.js` | OOB asset preloading and caching system |
-| `js/ui-controls.js` | Buddy selector grid, animation buttons |
-| `js/rive-controller.js` | Rive instance lifecycle and state management |
-| `public/reading-buddies/*/` | Character PNG assets (11 folders) |
+| `js/config.js` | Central config: buddy variants, state inputs, triggers |
+| `js/rive-controller.js` | Rive lifecycle, input management (setBoolean/setNumber) |
+| `js/ui-controls.js` | DOM event handlers, auto-wired with data-input attributes |
+| `public/rive/reading-buddy.riv` | Rive file with BuddyStateMachine and inputs |
+| `index.html` | States UI section with checkboxes and sliders |
 
 ---
 
 ## Project-Specific Quirks
 
-- **Buddy Addition Process**: Drop 11-12 PNGs in `public/reading-buddies/[id]/` folder, add entry to `BUDDIES` object in config.js
-- **Tail Handling**: Some buddies don't have tails - set `hasTail: false` in config, asset loader gracefully skips
-- **OOB Asset Names**: Must match Rive Editor exactly (case-sensitive): head, headBack, torso, armLeft, armRight, legLeft, legRight, eyeLeft, eyeRight, eyeBlinkLeft, eyeBlinkRight, tail
-- **legSeparator Never Used**: Was mistakenly included, now fully removed from codebase
-- **Rive Export vs Save**: Changes in Rive Editor don't affect .riv file until Export is clicked (Save ≠ Export)
+- **State Input Wiring**: JS config arrays must match Rive input names exactly (case-sensitive)
+- **Rive Export vs Save**: Changes in Rive Editor don't affect .riv file until Export is clicked
+- **catdog-orange-mouthshapes**: Extra folder with speech-related assets (not in main config)
+- **OOB Asset Names**: Must match Rive Editor exactly: head, headBack, torso, armLeft, armRight, etc.
+- **Tail Handling**: Some buddies have `hasTail: false`, asset loader gracefully skips tail.png
+- **Browser Cache**: Hard refresh (Cmd+Shift+R) needed after .riv file changes
 
 ---
 
 ## Recommended Next Tasks
 
-### Task 1: Update README.md (High Priority)
-**Files:** `README.md`
+### Task 1: Wire energyLevel to Animation Speed (High Priority)
+**Files:** `public/rive/reading-buddy.riv`
 **Steps:**
-1. Change "7 Character Variants" to "11 Character Variants"
-2. Update character list to include: barloc, george, maddie, scout
-3. Fix "84 character PNGs" to "~130 character PNGs (11-12 per buddy)"
-4. Update "7 variants" reference in How It Works section
-**Watch out for:** Might be other hardcoded counts elsewhere
+1. In Rive Editor, create state machine conditions using energyLevel (e.g., `energyLevel > 75`)
+2. Option A: Use as blend parameter for slow/fast idle variants
+3. Option B: Control breathing rate or subtle movement speed
+4. Test with slider in browser - verify visual changes
+5. Export .riv file to update project
+**Watch out for:** Name matching between JS config and Rive inputs
 
-### Task 2: Add Boolean/Number State Inputs (High Priority)
-**Files:** `public/rive/reading-buddy.riv`, `js/config.js`, `index.html`
+### Task 2: Explore Mouthshapes Integration (Medium Priority)
+**Files:** `public/reading-buddies/catdog-orange-mouthshapes/`, `js/config.js`
 **Steps:**
-1. In Rive Editor, add View Model properties: `isHappy` (boolean), `isReading` (boolean), `energyLevel` (number 0-100)
-2. Create state-dependent idle variants (happy idle vs normal idle)
-3. Add conditional transitions based on boolean states
-4. Update `CONFIG.STATE_INPUTS.booleans` and `numbers` arrays
-5. Unhide states section in HTML (`hidden` class removal)
-6. Test UI controls for state changes
-**Watch out for:** Exact property naming in Rive vs JS config, state persistence during buddy switching
+1. Examine mouth_*.png assets in mouthshapes folder
+2. Add to BUDDIES config if intended for integration
+3. Research Rive lip-sync or speech animation patterns
+**Watch out for:** This may be experimental - check with user on intended use
+
+### Task 3: Complex State Combinations (Medium Priority)
+**Files:** `public/rive/reading-buddy.riv`, `js/config.js`
+**Steps:**
+1. Create state combinations (isHappy + isReading = special animation)
+2. Add more boolean states (isSleepy, isExcited, etc.)
+3. Wire to different idle variants or expressions
 
 ---
 
 ## Critical Patterns & Rules
 
 ### Established Patterns
-1. **Configuration-Driven**: All buddy variants defined in `CONFIG.BUDDIES` with metadata
-2. **OOB Asset Loading**: `decodeImage` → `setRenderImage` → `unref()` pattern (memory leak prevention)
-3. **Graceful Degradation**: Missing assets logged as warnings, don't break functionality
+1. **State Input Management**: Config arrays → rive-controller caching → type-checked setBoolean/setNumber calls
+2. **UI Auto-Wiring**: HTML elements with `data-input="inputName"` automatically connect to state functions
+3. **Configuration-Driven**: All buddy variants and inputs defined in CONFIG objects, not hardcoded
 
 ### Patterns Learned This Session
-1. **Simple Config Updates**: Adding buddies requires only config change + asset drop
-2. **Boolean Flag Filtering**: Use buddy metadata (hasTail) to filter body parts array
-3. **Asset Validation**: Console logs show which assets load vs miss for debugging
+1. **MVP Boolean States**: Simple boolean→trigger transitions more practical than complex conditional states
+2. **Rive Data Binding**: Use View Model properties (modern) instead of legacy inputs system
+3. **UI Progressive Enhancement**: States section can be hidden/shown based on Rive input availability
 
 ### Code Standards
-- Buddy IDs must match folder names exactly
-- Asset names must match Rive Editor definitions (case-sensitive)
+- State input names must match between JS config and Rive exactly
 - Use debug logging for all state machine operations
-- Handle missing assets gracefully with informative warnings
+- Handle missing inputs gracefully (type checking in setBoolean/setNumber)
 
 ---
 
 ## Known Issues & Tech Debt
 
 ### Discovered This Session
-- **README Outdated**: Character count and descriptions incorrect after buddy additions
+- **Chrome DevTools MCP**: Connection problems during browser testing session
+- **Asset Count Mismatch**: README says ~130 PNGs, actual count is 152
 
 ### Open Issues
-- Boolean/number state inputs not yet implemented in Rive
-- States section hidden in UI until inputs are added
-- No favicon (harmless 404 in console)
-- Chrome DevTools MCP connection issues during testing
-
-### Technical Debt
+- energyLevel input ready but no visual effect yet
+- catdog-orange-mouthshapes folder not integrated in main config
 - No automated testing (manual browser testing only)
-- Hard-coded asset paths in configuration
-- No build process optimization
+
+### Blockers
+- None - all systems operational
 
 ---
 
@@ -166,32 +168,29 @@ git pull origin main
 
 ## Success Criteria for Next Session
 
-- [ ] README.md reflects 11 buddy variants accurately
-- [ ] Boolean toggles (isHappy, isReading) change character appearance
-- [ ] Energy level slider affects animation speed or character state
-- [ ] States section unhidden and functional in UI
-- [ ] All 11 buddy variants work with new state features
-- [ ] No console errors or memory leaks
+- [ ] energyLevel slider produces visible character changes
+- [ ] All 11 buddy variants work with energyLevel effects
+- [ ] Decision made on catdog-orange-mouthshapes integration
+- [ ] No console errors when changing states
+- [ ] Documentation updated to reflect new capabilities
 
 ---
 
 ## Quick Start for Next Session
 
-1. Read `CLAUDE.md` first (especially "Buddy Variants" section)
-2. Review git changes: `git status` - several files modified but not committed
-3. Start server: `python3 -m http.server 8080`
-4. Open http://localhost:8080 - verify all 11 buddies appear and animate correctly
-5. Commit current changes first, then start with README.md update
-6. Test each change immediately in browser
+1. Read `CLAUDE.md` first (especially Rive MCP connection setup)
+2. Check current state: `git status && python3 -m http.server 8080`
+3. Open http://localhost:8080 - verify States section visible and isHappy/isReading working
+4. Open Rive Early Access with `reading-buddy.riv` to work on energyLevel wiring
+5. Start with Task 1 (energyLevel animation speed)
 
 ---
 
 ## Session Metrics
 
-- **Files modified:** 3 (`js/config.js`, `js/asset-loader.js`, `CLAUDE.md`)
-- **Files deleted:** 1 (`legSeparator.png`)
-- **Assets added:** 4 new buddy folders (~44 PNG files)
-- **Features completed:** 4 new character variants, legSeparator cleanup
-- **Buddy count:** 7 → 11 variants
-- **Documentation updated:** CLAUDE.md reflects changes
+- **Files modified:** 3 (`index.html`, `js/config.js`, `public/rive/reading-buddy.riv`)
+- **Features completed:** Boolean state inputs with UI controls
+- **State inputs added:** isHappy (boolean), isReading (boolean), energyLevel (number)
+- **Commits:** 1 feature commit + push to origin
+- **UI improvements:** States section unhidden with working controls
 - **Time elapsed:** ~45 minutes
