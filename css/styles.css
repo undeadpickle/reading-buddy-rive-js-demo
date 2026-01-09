@@ -1,0 +1,435 @@
+/* css/styles.css */
+/* Light/neutral theme for Reading Buddy demo */
+
+/* CSS Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Theme Variables */
+:root {
+    --bg: #f5f5f5;
+    --panel-bg: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --accent: #4a90d9;
+    --accent-hover: #3a7bc8;
+    --accent-light: #e8f1fa;
+    --border: #e0e0e0;
+    --border-light: #eeeeee;
+    --canvas-bg: #fafafa;
+    --shadow: rgba(0, 0, 0, 0.08);
+    --shadow-hover: rgba(0, 0, 0, 0.12);
+
+    --radius: 8px;
+    --radius-sm: 4px;
+    --spacing: 16px;
+    --spacing-sm: 8px;
+    --spacing-lg: 24px;
+
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    --font-mono: 'SF Mono', Monaco, 'Consolas', monospace;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* Split-screen Layout */
+.demo-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 100vh;
+}
+
+/* Control Panel (Left) */
+.control-panel {
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border);
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.panel-header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.panel-header h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.panel-header .subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Control Sections */
+.control-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.control-section h2 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing);
+}
+
+/* Buddy Selector Grid */
+.buddy-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.buddy-thumb {
+    aspect-ratio: 1;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--canvas-bg);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.buddy-thumb:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px var(--shadow-hover);
+}
+
+.buddy-thumb.active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.buddy-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Button Groups */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.trigger-btn,
+.event-btn {
+    padding: var(--spacing-sm) var(--spacing);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel-bg);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.trigger-btn:hover,
+.event-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.trigger-btn:active,
+.event-btn:active,
+.trigger-btn.triggered,
+.event-btn.triggered {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: scale(0.98);
+}
+
+/* Toggle Controls */
+.toggle-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+    padding: var(--spacing-sm) 0;
+    cursor: pointer;
+}
+
+.toggle-control input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+}
+
+.toggle-control span {
+    font-size: 0.875rem;
+}
+
+/* Slider Controls */
+.slider-control {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+}
+
+.slider-control span {
+    font-size: 0.875rem;
+}
+
+.slider-control input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+.slider-control output {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+/* Debug Panel */
+.debug-section {
+    margin-top: auto;
+    padding-top: var(--spacing);
+    border-top: 1px solid var(--border-light);
+}
+
+.log-container {
+    background: var(--canvas-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm);
+    height: 150px;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.log-entry {
+    padding: 2px 0;
+    word-break: break-word;
+}
+
+.log-entry.log-info {
+    color: var(--text-secondary);
+}
+
+.log-entry.log-warn {
+    color: #b87a00;
+}
+
+.log-entry.log-error {
+    color: #c53030;
+}
+
+#clearLog {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--panel-bg);
+    cursor: pointer;
+}
+
+#clearLog:hover {
+    background: var(--canvas-bg);
+}
+
+/* Preview Panel (Right) */
+.preview-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    background: var(--bg);
+}
+
+/* Canvas Wrapper */
+.canvas-wrapper {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    background: var(--canvas-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 16px var(--shadow);
+    overflow: hidden;
+}
+
+#riveCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#riveCanvas.hidden {
+    display: none;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--canvas-bg);
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    margin-top: var(--spacing);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Placeholder (when .riv not loaded) */
+.placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--canvas-bg);
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+.placeholder.hidden {
+    display: none;
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing);
+    opacity: 0.5;
+}
+
+.placeholder p {
+    font-size: 0.875rem;
+}
+
+/* Preview Footer */
+.preview-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 500px;
+    margin-top: var(--spacing);
+    padding: 0 var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+#currentBuddy {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+#fpsCounter {
+    font-family: var(--font-mono);
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+    .demo-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .preview-panel {
+        order: -1;
+        padding: var(--spacing);
+    }
+
+    .canvas-wrapper {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        aspect-ratio: 1;
+    }
+
+    .preview-footer {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .control-panel {
+        border-right: none;
+        border-top: 1px solid var(--border);
+        max-height: none;
+        padding: var(--spacing);
+    }
+
+    .buddy-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .buddy-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .button-group {
+        gap: 6px;
+    }
+
+    .trigger-btn,
+    .event-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}

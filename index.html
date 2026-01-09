@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Buddy - Rive Demo</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Left Panel: Controls -->
+        <aside class="control-panel">
+            <header class="panel-header">
+                <h1>Reading Buddy Demo</h1>
+                <p class="subtitle">Rive Animation + OOB Assets</p>
+            </header>
+
+            <!-- Buddy Selection -->
+            <section class="control-section">
+                <h2>Select Buddy</h2>
+                <div class="buddy-grid" id="buddySelector">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+            <!-- Animation Triggers -->
+            <section class="control-section">
+                <h2>Animations</h2>
+                <div class="button-group" id="animationTriggers">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+            <!-- State Controls (hidden until boolean/number inputs added to Rive) -->
+            <section class="control-section hidden" id="statesSection">
+                <h2>States</h2>
+                <label class="toggle-control">
+                    <input type="checkbox" id="isHappy" data-input="isHappy">
+                    <span>Happy Mood</span>
+                </label>
+                <label class="toggle-control">
+                    <input type="checkbox" id="isReading" data-input="isReading">
+                    <span>Reading Mode</span>
+                </label>
+                <div class="slider-control">
+                    <span>Energy Level</span>
+                    <input type="range" id="energyLevel" data-input="energyLevel"
+                           min="0" max="100" value="50">
+                    <output id="energyLevelValue">50</output>
+                </div>
+            </section>
+
+            <!-- Event Simulators -->
+            <section class="control-section">
+                <h2>Simulate Events</h2>
+                <div class="button-group" id="eventSimulators">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+            <!-- Debug Log -->
+            <section class="control-section debug-section">
+                <h2>Debug Log</h2>
+                <div class="log-container" id="debugLog"></div>
+                <button id="clearLog">Clear Log</button>
+            </section>
+        </aside>
+
+        <!-- Right Panel: Rive Canvas -->
+        <main class="preview-panel">
+            <div class="canvas-wrapper">
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <p>Loading buddy...</p>
+                </div>
+
+                <!-- Placeholder (shown when .riv not loaded) -->
+                <div class="placeholder hidden" id="rivePlaceholder">
+                    <div class="placeholder-icon">&#129302;</div>
+                    <p>Rive file not loaded</p>
+                    <p style="margin-top: 8px; font-size: 0.75rem;">
+                        Add reading-buddy.riv to public/rive/
+                    </p>
+                </div>
+
+                <!-- Rive Canvas -->
+                <canvas id="riveCanvas" width="500" height="500"></canvas>
+            </div>
+
+            <footer class="preview-footer">
+                <span id="currentBuddy">Orange Cat-Dog</span>
+                <span id="fpsCounter">-- FPS</span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Rive Runtime (CDN) -->
+    <script src="https://unpkg.com/@rive-app/canvas@2.21.6"></script>
+
+    <!-- App Scripts (ES Modules) -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
