@@ -47,10 +47,10 @@ export const BODY_PARTS = [
 export const STATE_INPUTS = {
     // Triggers (fire once, auto-reset) - must match Rive input names exactly
     triggers: ['trig_wave', 'trig_jump'],
-    // Booleans (on/off states) - add in Rive as needed
-    booleans: [],
-    // Numbers (continuous values 0-100) - add in Rive as needed
-    numbers: [],
+    // Booleans (on/off states) - must match Rive input names exactly
+    booleans: ['isHappy', 'isReading'],
+    // Numbers (continuous values 0-100) - must match Rive input names exactly
+    numbers: ['energyLevel'],
 };
 
 // Event mappings for simulated external events
