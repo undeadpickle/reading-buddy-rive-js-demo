@@ -18,7 +18,11 @@ export const BUDDIES = {
     'catdog-purple': { name: 'Purple Cat-Dog', hasTail: true },
     'catdog-white': { name: 'White Cat-Dog', hasTail: true },
     'kitten-ninja': { name: 'Ninja Kitten', hasTail: true },
-    'master-hamster': { name: 'Master Hamster', hasTail: false, hasLegSeparator: true },
+    'master-hamster': { name: 'Master Hamster', hasTail: false },
+    'barloc': { name: 'Barloc', hasTail: true },
+    'george': { name: 'George', hasTail: false },
+    'maddie': { name: 'Maddie', hasTail: false },
+    'scout': { name: 'Scout', hasTail: true },
 };
 
 // Body parts that map to OOB asset names in .riv
@@ -35,8 +39,7 @@ export const BODY_PARTS = [
     'eyeRight',
     'eyeBlinkLeft',
     'eyeBlinkRight',
-    'tail',           // Not present on master-hamster
-    'legSeparator',   // Only on master-hamster
+    'tail',  // Only loaded if buddy.hasTail === true
 ];
 
 // State machine input names - coordinate with Rive file

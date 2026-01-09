@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Reading Buddy Rive Demo - A vanilla JS interactive character demo using Rive animations with OOB (out-of-band) asset swapping. Displays animated "reading buddy" characters with 7 variants and dynamic PNG body part swapping.
+Reading Buddy Rive Demo - A vanilla JS interactive character demo using Rive animations with OOB (out-of-band) asset swapping. Displays animated "reading buddy" characters with 11 variants and dynamic PNG body part swapping.
 
 ## Development Commands
 
@@ -74,7 +74,7 @@ git pull origin main
 
 ### Data Flow
 
-1. Page load → preload all buddy PNGs (84 total, 12 per buddy) into memory cache
+1. Page load → preload all buddy PNGs (11-12 per buddy, ~130 total) into memory cache
 2. Initialize Rive with default buddy → assetLoader callback intercepts OOB image requests → serves from cache
 3. Buddy switch → cleanup old Rive instance → reinitialize with new buddy's cached assets
 
@@ -93,7 +93,7 @@ assetLoader: async (asset, bytes) => {
 }
 ```
 
-Assets must be named exactly as defined in Rive Editor (case-sensitive): head, headBack, torso, armLeft, armRight, legLeft, legRight, eyeLeft, eyeRight, eyeBlinkLeft, eyeBlinkRight, tail, legSeparator.
+Assets must be named exactly as defined in Rive Editor (case-sensitive): head, headBack, torso, armLeft, armRight, legLeft, legRight, eyeLeft, eyeRight, eyeBlinkLeft, eyeBlinkRight, tail.
 
 ### Asset Structure
 
@@ -102,7 +102,7 @@ public/
 ├── rive/reading-buddy.riv       # Rive file with bones + BuddyStateMachine
 └── reading-buddies/
     └── [buddy-id]/              # catdog-orange, catdog-blue, etc.
-        └── [body-part].png      # 12 PNGs per buddy (500x500px transparent)
+        └── [body-part].png      # 11-12 PNGs per buddy (500x500px transparent)
 ```
 
 ## Rive-Specific Notes
@@ -116,9 +116,24 @@ public/
 
 ## Buddy Variants
 
-All buddies have standard body parts except:
-- **master-hamster**: No tail, has legSeparator
-- Asset loading gracefully handles missing parts via hasTail/hasLegSeparator flags in config
+All buddies have standard body parts. Some buddies don't have tails:
+- **master-hamster**: No tail
+- **george**: No tail
+- **maddie**: No tail
+
+Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
+
+### Adding New Buddies
+
+1. Create folder: `public/reading-buddies/[buddy-id]/`
+2. Add PNG assets (11-12 files, 500x500px transparent):
+   - Required: head, headBack, torso, armLeft, armRight, legLeft, legRight, eyeLeft, eyeRight, eyeBlinkLeft, eyeBlinkRight
+   - Optional: tail (omit if character has no tail)
+3. Add entry to `BUDDIES` object in `js/config.js`:
+   ```javascript
+   'buddy-id': { name: 'Display Name', hasTail: true },  // or hasTail: false
+   ```
+4. Test in browser - buddy appears automatically in selector grid
 
 ## Known Issues / Current State
 
@@ -143,4 +158,4 @@ All buddies have standard body parts except:
 
 ### Harmless Errors (Ignore These)
 - `404 favicon.ico` - Browser auto-requests, no favicon in project
-- `Missing asset in cache: tail` for master-hamster - Expected (hamster has no tail)
+- `Missing asset in cache: tail` - Expected for tailless buddies (master-hamster, george, maddie)

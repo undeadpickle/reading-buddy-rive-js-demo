@@ -33,7 +33,6 @@ export async function preloadBuddyAssets(buddyId) {
     // Filter body parts based on buddy type
     const partsToLoad = BODY_PARTS.filter(part => {
         if (part === 'tail' && !buddy.hasTail) return false;
-        if (part === 'legSeparator' && !buddy.hasLegSeparator) return false;
         return true;
     });
 

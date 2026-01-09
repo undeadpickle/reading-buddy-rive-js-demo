@@ -1,11 +1,11 @@
 # Reading Buddy Rive Demo
 
-Interactive animated character demo using [Rive](https://rive.app) with dynamic OOB (out-of-band) asset swapping. Switch between 7 different "reading buddy" character variants in real-time while maintaining smooth animations.
+Interactive animated character demo using [Rive](https://rive.app) with dynamic OOB (out-of-band) asset swapping. Switch between 11 different "reading buddy" character variants in real-time while maintaining smooth animations.
 
 ## Features
 
-- **7 Character Variants**: catdog-orange, catdog-blue, catdog-green, catdog-purple, catdog-white, kitten-ninja, master-hamster
-- **Dynamic Asset Swapping**: 12 body parts per character loaded via OOB asset system
+- **11 Character Variants**: catdog-orange, catdog-blue, catdog-green, catdog-purple, catdog-white, kitten-ninja, master-hamster, barloc, george, maddie, scout
+- **Dynamic Asset Swapping**: 11-12 body parts per character loaded via OOB asset system
 - **Trigger Animations**: Wave and jump animations with smooth transitions back to idle
 - **Auto-Blink System**: Characters blink naturally without manual triggering
 - **Zero Build Process**: Vanilla JavaScript with ES modules - just serve and run
@@ -40,12 +40,12 @@ open http://localhost:8080
     └── reading-buddies/          # Character PNG assets
         ├── catdog-orange/
         ├── catdog-blue/
-        └── ... (7 variants)
+        └── ... (11 variants)
 ```
 
 ## How It Works
 
-1. **Preload**: All 84 character PNGs (12 parts x 7 variants) are loaded into memory at startup
+1. **Preload**: All ~130 character PNGs (11-12 parts x 11 variants) are loaded into memory at startup
 2. **Initialize**: Rive runtime starts with the default buddy, intercepting OOB asset requests
 3. **Switch**: Selecting a new buddy cleans up the old instance and reinitializes with cached assets
 
