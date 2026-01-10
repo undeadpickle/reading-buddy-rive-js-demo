@@ -91,7 +91,16 @@ pkill -f "chrome-devtools-mcp"
 
 ```javascript
 assetLoader: async (asset, bytes) => {
-    if (bytes.length > 0 || asset.cdnUuid?.length > 0) return false; // Let Rive handle embedded/CDN
+    // Fonts: must explicitly decode even when embedded (see "Fonts Not Rendering" gotcha)
+    if (asset.isFont && bytes.length > 0) {
+        const font = await rive.decodeFont(bytes);
+        asset.setFont(font);
+        font.unref();
+        return true;
+    }
+    // Other embedded/CDN assets: let Rive handle
+    if (bytes.length > 0 || asset.cdnUuid?.length > 0) return false;
+    // OOB images: load from cache
     if (asset.isImage) {
         const image = await rive.decodeImage(imageBytes);
         asset.setRenderImage(image);
@@ -169,3 +178,15 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 
 ### Harmless Errors (Ignore These)
 - `Missing asset in cache: tail` - Expected for tailless buddies (master-hamster, george, maddie)
+
+### Fonts Not Rendering with Custom assetLoader
+When using a custom `assetLoader` (for OOB image swapping), **embedded fonts won't render** if you just `return false`. You must explicitly decode and set them:
+```javascript
+if (asset.isFont && bytes.length > 0) {
+    const font = await rive.decodeFont(bytes);
+    asset.setFont(font);
+    font.unref();
+    return true;
+}
+```
+This applies even though Rive docs suggest `return false` should let Rive handle embedded assets automatically. The fix is in `js/asset-loader.js`.

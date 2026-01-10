@@ -78,6 +78,20 @@ export async function preloadAllBuddies() {
  */
 export function createAssetLoader(buddyId, rive) {
     return async (asset, bytes) => {
+        // Handle embedded fonts explicitly (required when using custom assetLoader)
+        // See CLAUDE.md "Fonts Not Rendering" gotcha for details
+        if (asset.isFont && bytes.length > 0) {
+            try {
+                const font = await rive.decodeFont(bytes);
+                asset.setFont(font);
+                font.unref();
+                return true;
+            } catch (err) {
+                log(`Font decode error for ${asset.name}: ${err.message}`, 'error');
+                return false;
+            }
+        }
+
         // If asset has bytes (embedded) or CDN UUID (hosted), let Rive handle it
         if (bytes.length > 0 || asset.cdnUuid?.length > 0) {
             return false;
