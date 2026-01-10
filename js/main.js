@@ -1,40 +1,14 @@
 // js/main.js
-// Entry point - initialization, logging, and FPS counter
+// Entry point - initialization and FPS counter
 
 import { CONFIG } from './config.js';
 import { preloadAllBuddies } from './asset-loader.js';
 import { initRive, handleResize, cleanup } from './rive-controller.js';
 import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay } from './ui-controls.js';
+import { log } from './logger.js';
 
-/**
- * Logging utility with timestamp and debug panel output
- * @param {string} message
- * @param {'info'|'warn'|'error'} level
- */
-export function log(message, level = 'info') {
-    const timestamp = new Date().toLocaleTimeString();
-    const logEntry = `[${timestamp}] ${message}`;
-
-    // Console output
-    console[level](logEntry);
-
-    // Debug panel output
-    const debugLog = document.getElementById('debugLog');
-    if (debugLog) {
-        const entry = document.createElement('div');
-        entry.className = `log-entry log-${level}`;
-        entry.textContent = logEntry;
-        debugLog.appendChild(entry);
-
-        // Auto-scroll to bottom
-        debugLog.scrollTop = debugLog.scrollHeight;
-
-        // Keep log size manageable (max 100 entries)
-        while (debugLog.children.length > 100) {
-            debugLog.removeChild(debugLog.firstChild);
-        }
-    }
-}
+// Re-export for backwards compatibility
+export { log };
 
 /**
  * FPS counter

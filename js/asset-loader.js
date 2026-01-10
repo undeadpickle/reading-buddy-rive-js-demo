@@ -2,7 +2,7 @@
 // OOB (out-of-band) asset preloading and Rive asset loader callback
 
 import { CONFIG, BUDDIES, BODY_PARTS } from './config.js';
-import { log } from './main.js';
+import { log } from './logger.js';
 
 // Cache for preloaded image bytes (Uint8Array per body part)
 const imageCache = new Map();

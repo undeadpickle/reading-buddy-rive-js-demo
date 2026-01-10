@@ -75,10 +75,11 @@ pkill -f "chrome-devtools-mcp"
 ### Module Structure
 
 - **js/config.js** - Central configuration: Rive file path, buddy variants, body parts list, state machine inputs, event mappings
+- **js/logger.js** - Centralized logging utility with debug panel output
 - **js/asset-loader.js** - OOB asset preloading, image caching (Map of buddyId → Map of bodyPart → Uint8Array), and Rive assetLoader callback
 - **js/rive-controller.js** - Rive instance lifecycle, state machine input caching, trigger/boolean/number input control, buddy switching
 - **js/ui-controls.js** - DOM event handlers, buddy selector grid, animation buttons, event simulators
-- **js/main.js** - Entry point, initialization sequence, logging utility, FPS counter
+- **js/main.js** - Entry point, initialization sequence, FPS counter
 
 ### Data Flow
 
@@ -116,7 +117,7 @@ public/
 ## Rive-Specific Notes
 
 - Rive runtime loaded via CDN: `@rive-app/canvas@2.21.6`
-- State machine: `BuddyStateMachine` with triggers (`trig_wave`, `trig_jump`, `trig_showBubble`, `trig_hideBubble`), booleans (`isHappy`, `isReading`), and number (`energyLevel`)
+- State machine: `BuddyStateMachine` with triggers (`trig_wave`, `trig_jump`), booleans (`isHappy`, `isReading`), and number (`energyLevel` - coming soon)
 - Artboard config set to `null` to use default (avoid "Invalid artboard name" errors)
 - State machine inputs are View Model properties, not traditional inputs
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops
@@ -145,9 +146,8 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 
 ## Known Issues / Current State
 
-- `energyLevel` number input exists but not yet wired to visual effects in Rive
-- `catdog-orange-mouthshapes` folder exists with speech assets but not integrated in main config
-- No favicon (404 in console - harmless)
+- `energyLevel` number input exists but not yet wired to visual effects in Rive (UI shows "coming soon")
+- `catdog-orange-mouthshapes` folder exists with mouth shape assets but not integrated (future feature)
 
 ## Gotchas & Troubleshooting
 
@@ -168,5 +168,4 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 - **Export** writes the actual .riv file to disk - required after making changes in Rive Editor
 
 ### Harmless Errors (Ignore These)
-- `404 favicon.ico` - Browser auto-requests, no favicon in project
 - `Missing asset in cache: tail` - Expected for tailless buddies (master-hamster, george, maddie)

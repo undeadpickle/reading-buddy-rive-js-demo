@@ -6,7 +6,7 @@ export const CONFIG = {
     ASSETS_BASE: './public/reading-buddies',
     CANVAS_SIZE: 500,
     STATE_MACHINE: 'BuddyStateMachine',  // State machine name in .riv
-    ARTBOARD: null,       // Let Rive use the default artboard
+    ARTBOARD: 'Reading Buddy',  // Explicit artboard name (required for View Model binding)
     DEFAULT_BUDDY: 'catdog-orange',
 };
 
@@ -46,28 +46,12 @@ export const BODY_PARTS = [
 // Note: These are View Model properties (triggers) in Rive
 export const STATE_INPUTS = {
     // Triggers (fire once, auto-reset) - must match Rive input names exactly
-    triggers: ['trig_wave', 'trig_jump', 'trig_showBubble', 'trig_hideBubble'],
+    triggers: ['trig_wave', 'trig_jump'],
     // Booleans (on/off states) - must match Rive input names exactly
     booleans: ['isHappy', 'isReading'],
-    // Numbers (continuous values 0-100) - must match Rive input names exactly
+    // Numbers (continuous values 0-100) - coming soon, not yet wired in Rive
     numbers: ['energyLevel'],
 };
-
-// Speech bubble configuration
-export const SPEECH_BUBBLE = {
-    textRun: 'dialogue',              // Exported text run name in Rive
-    showTrigger: 'trig_showBubble',   // Trigger to show bubble
-    hideTrigger: 'trig_hideBubble',   // Trigger to hide bubble
-};
-
-// Sample dialogues for testing speech bubble
-export const SAMPLE_DIALOGUES = [
-    "Your new egg is here!",
-    "I found some books for you!",
-    "Ready to read something amazing?",
-    "You're doing great!",
-    "Let's go on an adventure!",
-];
 
 // Event mappings for simulated external events
 // Each event can trigger animations and set states

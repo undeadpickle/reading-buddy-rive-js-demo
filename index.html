@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reading Buddy - Rive Demo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -43,9 +44,9 @@
                     <span>Reading Mode</span>
                 </label>
                 <div class="slider-control">
-                    <span>Energy Level</span>
+                    <span>Energy Level <small style="color: var(--text-muted);">(coming soon)</small></span>
                     <input type="range" id="energyLevel" data-input="energyLevel"
-                           min="0" max="100" value="50">
+                           min="0" max="100" value="50" disabled>
                     <output id="energyLevelValue">50</output>
                 </div>
             </section>
@@ -55,25 +56,6 @@
                 <h2>Simulate Events</h2>
                 <div class="button-group" id="eventSimulators">
                     <!-- Dynamically populated -->
-                </div>
-            </section>
-
-            <!-- Speech Bubble Controls -->
-            <section class="control-section" id="speechBubbleSection">
-                <h2>Speech Bubble</h2>
-                <div class="speech-input-group">
-                    <input type="text"
-                           id="bubbleTextInput"
-                           placeholder="Type message..."
-                           maxlength="100">
-                    <button id="sendBubbleText">Send</button>
-                </div>
-                <button id="hideBubbleBtn" class="secondary-btn">Hide Bubble</button>
-                <div class="sample-dialogues-section">
-                    <span class="sample-label">Quick Messages:</span>
-                    <div class="button-group" id="sampleDialogues">
-                        <!-- Dynamically populated -->
-                    </div>
                 </div>
             </section>
 
