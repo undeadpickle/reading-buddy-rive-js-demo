@@ -74,7 +74,7 @@ git pull origin main
 
 ### Data Flow
 
-1. Page load → preload all buddy PNGs (11-12 per buddy, ~130 total) into memory cache
+1. Page load → preload all buddy PNGs (11-12 per buddy, ~150 total) into memory cache
 2. Initialize Rive with default buddy → assetLoader callback intercepts OOB image requests → serves from cache
 3. Buddy switch → cleanup old Rive instance → reinitialize with new buddy's cached assets
 
@@ -108,7 +108,7 @@ public/
 ## Rive-Specific Notes
 
 - Rive runtime loaded via CDN: `@rive-app/canvas@2.21.6`
-- State machine: `BuddyStateMachine` with trigger inputs (`trig_wave`, `trig_jump`)
+- State machine: `BuddyStateMachine` with triggers (`trig_wave`, `trig_jump`), booleans (`isHappy`, `isReading`), and number (`energyLevel`)
 - Artboard config set to `null` to use default (avoid "Invalid artboard name" errors)
 - State machine inputs are View Model properties, not traditional inputs
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops
@@ -137,15 +137,18 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 
 ## Known Issues / Current State
 
-- Boolean/number state inputs not yet implemented (states section hidden in UI)
+- `energyLevel` number input exists but not yet wired to visual effects in Rive
+- `catdog-orange-mouthshapes` folder exists with speech assets but not integrated in main config
 - No favicon (404 in console - harmless)
 
 ## Gotchas & Troubleshooting
 
-### Trigger Names Must Match Exactly
-- JS `config.js` trigger names must match Rive input names exactly (case-sensitive)
+### Input Names Must Match Exactly
+- JS `config.js` input names must match Rive input names exactly (case-sensitive)
 - Current triggers: `trig_wave`, `trig_jump`
-- Check debug log for `Input found: [name]` vs `Trigger not found: [name]`
+- Current booleans: `isHappy`, `isReading`
+- Current numbers: `energyLevel`
+- Check debug log for `Input found: [name]` vs `[Type] not found: [name]`
 
 ### Browser Cache Issues
 - **Symptoms:** Old .riv file playing, assets not updating, animations not firing
