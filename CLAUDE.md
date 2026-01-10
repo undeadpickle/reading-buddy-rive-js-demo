@@ -62,6 +62,14 @@ git pull origin main
 
 6. **Rive version issue?** - Make sure you're running Rive Early Access (not standard Rive) - MCP is only available in Early Access
 
+### Chrome DevTools MCP Issues
+If Chrome DevTools MCP has connection problems (browser already running error):
+```bash
+# Kill stale browser processes
+pkill -f "chrome-devtools-mcp"
+# Then restart Claude Code session to reconnect
+```
+
 ## Architecture
 
 ### Module Structure
@@ -108,7 +116,7 @@ public/
 ## Rive-Specific Notes
 
 - Rive runtime loaded via CDN: `@rive-app/canvas@2.21.6`
-- State machine: `BuddyStateMachine` with triggers (`trig_wave`, `trig_jump`), booleans (`isHappy`, `isReading`), and number (`energyLevel`)
+- State machine: `BuddyStateMachine` with triggers (`trig_wave`, `trig_jump`, `trig_showBubble`, `trig_hideBubble`), booleans (`isHappy`, `isReading`), and number (`energyLevel`)
 - Artboard config set to `null` to use default (avoid "Invalid artboard name" errors)
 - State machine inputs are View Model properties, not traditional inputs
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops

@@ -1,7 +1,7 @@
 // js/rive-controller.js
 // Rive instance management, state machine control, and buddy switching
 
-import { CONFIG } from './config.js';
+import { CONFIG, SPEECH_BUBBLE } from './config.js';
 import { createAssetLoader, preloadBuddyAssets } from './asset-loader.js';
 import { log } from './main.js';
 
@@ -263,6 +263,59 @@ export function handleResize() {
         riveInstance.resizeDrawingSurfaceToCanvas();
         log('Resized drawing surface');
     }
+}
+
+// ============================================
+// Speech Bubble Functions
+// ============================================
+
+/**
+ * Set speech bubble text using Rive's text run API
+ * @param {string} text - Text to display in bubble
+ * @returns {boolean} - true if successful
+ */
+export function setBubbleText(text) {
+    if (!isRiveLoaded || !riveInstance) {
+        log('Cannot set bubble text: Rive not loaded', 'warn');
+        return false;
+    }
+
+    try {
+        // Debug: Check if text run exists and get current value
+        const currentValue = riveInstance.getTextRunValue(SPEECH_BUBBLE.textRun);
+        log(`Text run "${SPEECH_BUBBLE.textRun}" current value: ${currentValue === undefined ? 'UNDEFINED (not found!)' : `"${currentValue}"`}`);
+
+        riveInstance.setTextRunValue(SPEECH_BUBBLE.textRun, text);
+
+        // Verify it was set
+        const newValue = riveInstance.getTextRunValue(SPEECH_BUBBLE.textRun);
+        const truncated = text.length > 30 ? text.substring(0, 30) + '...' : text;
+        log(`Set bubble text: "${truncated}" -> verified: "${newValue}"`);
+        return true;
+    } catch (err) {
+        log(`Error setting bubble text: ${err.message}`, 'error');
+        return false;
+    }
+}
+
+/**
+ * Show speech bubble with optional text
+ * @param {string} [text] - Optional text to show
+ * @returns {boolean} - true if trigger fired
+ */
+export function showBubble(text) {
+    if (text) {
+        setBubbleText(text);
+    }
+    return fireTrigger(SPEECH_BUBBLE.showTrigger);
+}
+
+/**
+ * Hide speech bubble
+ * @returns {boolean} - true if trigger fired
+ */
+export function hideBubble() {
+    return fireTrigger(SPEECH_BUBBLE.hideTrigger);
 }
 
 /**

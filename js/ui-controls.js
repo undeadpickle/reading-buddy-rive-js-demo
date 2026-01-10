@@ -1,8 +1,8 @@
 // js/ui-controls.js
 // UI event handlers and control panel setup
 
-import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS } from './config.js';
-import { switchBuddy, fireTrigger, setBoolean, setNumber, getCurrentBuddy } from './rive-controller.js';
+import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS, SAMPLE_DIALOGUES } from './config.js';
+import { switchBuddy, fireTrigger, setBoolean, setNumber, getCurrentBuddy, showBubble, hideBubble } from './rive-controller.js';
 import { log } from './main.js';
 
 /**
@@ -13,6 +13,7 @@ export function initControls() {
     initAnimationTriggers();
     initStateControls();
     initEventSimulators();
+    initSpeechBubbleControls();
     initDebugPanel();
 
     log('UI controls initialized');
@@ -147,6 +148,60 @@ function initEventSimulators() {
             setTimeout(() => button.classList.remove('triggered'), 200);
         }
     });
+}
+
+/**
+ * Set up speech bubble controls
+ */
+function initSpeechBubbleControls() {
+    const container = document.getElementById('speechBubbleSection');
+    if (!container) return;
+
+    // Text input and send button
+    const textInput = document.getElementById('bubbleTextInput');
+    const sendBtn = document.getElementById('sendBubbleText');
+    const hideBtn = document.getElementById('hideBubbleBtn');
+
+    if (textInput && sendBtn) {
+        sendBtn.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if (text) {
+                showBubble(text);
+            }
+        });
+
+        // Enter key support
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+    }
+
+    // Hide bubble button
+    if (hideBtn) {
+        hideBtn.addEventListener('click', () => {
+            hideBubble();
+        });
+    }
+
+    // Sample dialogue buttons
+    const samplesContainer = document.getElementById('sampleDialogues');
+    if (samplesContainer && SAMPLE_DIALOGUES) {
+        SAMPLE_DIALOGUES.forEach((text, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'sample-dialogue-btn';
+            btn.textContent = `Sample ${index + 1}`;
+            btn.title = text;
+            btn.addEventListener('click', () => {
+                showBubble(text);
+                if (textInput) textInput.value = text;
+            });
+            samplesContainer.appendChild(btn);
+        });
+    }
+
+    log('Speech bubble controls initialized');
 }
 
 /**

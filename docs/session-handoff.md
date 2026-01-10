@@ -1,144 +1,157 @@
-# Session Handoff: State-Driven Behaviors Implemented
+# Session Handoff: Speech Bubble System Implementation
 
-> Generated: January 9, 2026 3:45 PM
-> Previous session: 4 new buddy characters added
+> Generated: January 9, 2026 5:30 PM
+> Previous session: State-driven behaviors implemented
 
 ---
 
 ## Mission for Next Session
 
-Wire up the energyLevel input to control animation speed or character states, then explore integrating the catdog-orange-mouthshapes variant for speech features.
+Fix the Rive Editor text element setup to complete the speech bubble system. The JavaScript code is fully functional - text is not rendering due to Rive file configuration issues (text element opacity, fill color, or animation keyframes).
 
 ---
 
 ## Current Status
 
 ### Completed This Session
-- **Boolean Inputs**: Added `isHappy` (triggers jump) and `isReading` (triggers wave) with working UI controls
-- **Number Input**: Added `energyLevel` slider (0-100) ready for Rive integration
-- **States UI**: Unhidden States section with checkboxes and slider controls
-- **Rive Integration**: Updated .riv file with new state machine inputs and transitions
+- **Speech Bubble JavaScript API**: Complete `setBubbleText()`, `showBubble()`, `hideBubble()` functions working correctly
+- **UI Controls**: Text input, send button, hide button, and 5 sample dialogue buttons all functional
+- **State Machine Integration**: Speech bubble triggers (`trig_showBubble`, `trig_hideBubble`) working with smooth transitions
+- **CSS Styling**: Complete styling for speech input controls and sample buttons
+- **API Verification**: `setTextRunValue()` confirmed working via debug logging - text value updates correctly
 
 ### In Progress
-- energyLevel number input exists but not yet wired to visual effects in Rive
+- **Text Visual Rendering**: Bubble shows/hides correctly but text content not visible in Rive canvas
 
 ### Next Priority
-- **Wire energyLevel**: Connect to animation speed, idle variants, or breathing rate in Rive
-- **Mouthshapes Integration**: Explore catdog-orange-mouthshapes folder for speech features
-- **Additional State Behaviors**: Create more complex state-driven animations
+- **Fix Rive Text Element**: Investigate text element's opacity, fill color, and animation keyframes in `anime_bubble_visible` timeline
+- **Re-export Rive file**: After fixing text setup, export .riv file and test in browser
 
 ---
 
 ## Session Retrospective
 
 ### What Worked Well
-- **MVP Approach**: Starting with simple boolean→animation triggers before complex behaviors
-- **Existing Architecture**: JS scaffolding for setBoolean/setNumber was already complete
-- **Rive Data Binding**: Modern approach using View Model properties instead of legacy inputs
+- **API-First Development**: Built and tested JavaScript API layer before visual debugging - confirmed code is not the issue
+- **Progressive Enhancement**: Speech bubble functionality works end-to-end except for visual text rendering
+- **Debug Instrumentation**: Added comprehensive logging that proved `setTextRunValue()` succeeds (`"Hello, reader!"` → `"Your new egg is here!"`)
 
 ### Edge Cases & Failures
-- **Chrome DevTools MCP**: Connection issues prevented automated browser testing (known issue)
+- **Chrome DevTools MCP**: Initial connection failed due to stale browser processes → Fixed with `pkill -f "chrome-devtools-mcp"` then reconnect
+- **Text Run Export**: Despite proper export as `[dialogue]` in Rive, text element not rendering visually
 
 ### Wrong Assumptions
-- **Initial Complexity**: Planned complex visual behaviors, but simple animation triggers proved more practical for MVP
+- **Text Run API**: Initially thought `setTextRunValue()` was deprecated, but documentation confirms it's still valid alongside newer data binding
+- **Visual Issue**: Assumed JavaScript error, but debugging proved the issue is purely Rive Editor configuration
 
 ---
 
 ## Project Context
 
 ### Architecture Overview
-Vanilla JS demo with Rive character animation using OOB asset swapping. Configuration-driven buddy system with state machine inputs for interactive behaviors. 12 asset folders (11 integrated, 1 experimental).
+Vanilla JS demo with Rive character animation using OOB asset swapping. Added speech bubble system using Rive's `setTextRunValue()` API for dynamic text. Configuration-driven buddy system with 11 active variants plus experimental mouthshapes variant.
 
 ### Tech Stack
 - **Frontend:** Vanilla JavaScript (ES Modules)
 - **Animation:** Rive Runtime (@rive-app/canvas@2.21.6 via CDN)
-- **Assets:** 152 PNG files across 12 character folders
+- **Text API:** Rive `setTextRunValue()` for dynamic speech bubble content
+- **Assets:** 152 PNG files across 12 character folders (11 active + 1 experimental)
 - **Server:** Python HTTP server for local development
 - **Build:** None (vanilla JS, no bundling)
 
 ### Key Files
 | File | Purpose |
 |------|---------|
-| `js/config.js` | Central config: buddy variants, state inputs, triggers |
-| `js/rive-controller.js` | Rive lifecycle, input management (setBoolean/setNumber) |
-| `js/ui-controls.js` | DOM event handlers, auto-wired with data-input attributes |
-| `public/rive/reading-buddy.riv` | Rive file with BuddyStateMachine and inputs |
-| `index.html` | States UI section with checkboxes and sliders |
+| `js/config.js` | SPEECH_BUBBLE config, SAMPLE_DIALOGUES array, speech triggers |
+| `js/rive-controller.js` | setBubbleText(), showBubble(), hideBubble() functions |
+| `js/ui-controls.js` | initSpeechBubbleControls() with text input and sample buttons |
+| `index.html` | Speech Bubble UI section with input, buttons, samples |
+| `css/styles.css` | Speech input styling and sample button layout |
+| `public/rive/reading-buddy.riv` | SpeechBubbleLayer with transitions, text run export |
 
 ---
 
 ## Project-Specific Quirks
 
-- **State Input Wiring**: JS config arrays must match Rive input names exactly (case-sensitive)
+- **Text Run Export**: Text must be exported as `[dialogue]` in Rive Inspector → Text Run section to be discoverable by JavaScript
+- **API vs Visual**: `setTextRunValue()` can succeed in JavaScript while text element fails to render visually (this session's issue)
 - **Rive Export vs Save**: Changes in Rive Editor don't affect .riv file until Export is clicked
-- **catdog-orange-mouthshapes**: Extra folder with speech-related assets (not in main config)
-- **OOB Asset Names**: Must match Rive Editor exactly: head, headBack, torso, armLeft, armRight, etc.
-- **Tail Handling**: Some buddies have `hasTail: false`, asset loader gracefully skips tail.png
 - **Browser Cache**: Hard refresh (Cmd+Shift+R) needed after .riv file changes
+- **State Machine Simplification**: Using 2 states (hidden/visible) with transition duration instead of 4 states with fadeIn/fadeOut animations
+- **Speech Bubble Position**: Located top-right of character with pointer toward buddy's head (inside Rive canvas)
 
 ---
 
 ## Recommended Next Tasks
 
-### Task 1: Wire energyLevel to Animation Speed (High Priority)
+### Task 1: Fix Rive Text Element Setup (High Priority - BLOCKING)
 **Files:** `public/rive/reading-buddy.riv`
 **Steps:**
-1. In Rive Editor, create state machine conditions using energyLevel (e.g., `energyLevel > 75`)
-2. Option A: Use as blend parameter for slow/fast idle variants
-3. Option B: Control breathing rate or subtle movement speed
-4. Test with slider in browser - verify visual changes
-5. Export .riv file to update project
-**Watch out for:** Name matching between JS config and Rive inputs
+1. Open Rive Early Access with the reading-buddy.riv file
+2. Check text element directly (not SpeechBubbleGroup):
+   - **Fill Color**: Ensure text has solid black fill with 100% opacity (not white on white background)
+   - **Element Opacity**: Text element itself should have 100% opacity in Design mode
+   - **Layer Order**: Text element should be above bubble background shape in hierarchy
+3. Check `anime_bubble_visible` timeline:
+   - Verify Text element has explicit opacity keyframe = 100%
+   - If only SpeechBubbleGroup is animated, add Text element keyframe
+4. Quick test: In Design mode, set SpeechBubbleGroup opacity to 100% - can you see "Hello, reader!" text?
+5. Export .riv file (File → Export) to update local file
+6. Hard refresh browser and test Sample 1 button
+**Watch out for:** Text element vs. SpeechBubbleGroup confusion - both need proper opacity setup
 
-### Task 2: Explore Mouthshapes Integration (Medium Priority)
-**Files:** `public/reading-buddies/catdog-orange-mouthshapes/`, `js/config.js`
+### Task 2: Speech Bubble Enhancement (Medium Priority)
+**Files:** `js/config.js`, `js/rive-controller.js`
+**Steps:**
+1. Add more sample dialogues to SAMPLE_DIALOGUES array
+2. Consider adding setBubbleText() without show trigger for pre-loading text
+3. Add bubble auto-hide timer functionality if desired
+**Watch out for:** Don't modify core API until visual rendering works
+
+### Task 3: Mouthshapes Integration Research (Low Priority)
+**Files:** `public/reading-buddies/catdog-orange-mouthshapes/`
 **Steps:**
 1. Examine mouth_*.png assets in mouthshapes folder
-2. Add to BUDDIES config if intended for integration
-3. Research Rive lip-sync or speech animation patterns
-**Watch out for:** This may be experimental - check with user on intended use
-
-### Task 3: Complex State Combinations (Medium Priority)
-**Files:** `public/rive/reading-buddy.riv`, `js/config.js`
-**Steps:**
-1. Create state combinations (isHappy + isReading = special animation)
-2. Add more boolean states (isSleepy, isExcited, etc.)
-3. Wire to different idle variants or expressions
+2. Research if these should integrate with speech bubble system
+3. Check with user on intended purpose (lip-sync animation?)
 
 ---
 
 ## Critical Patterns & Rules
 
 ### Established Patterns
-1. **State Input Management**: Config arrays → rive-controller caching → type-checked setBoolean/setNumber calls
-2. **UI Auto-Wiring**: HTML elements with `data-input="inputName"` automatically connect to state functions
-3. **Configuration-Driven**: All buddy variants and inputs defined in CONFIG objects, not hardcoded
+1. **Speech Bubble API**: `setBubbleText(text)` → `showBubble(text)` → `hideBubble()` workflow
+2. **Text Run Export**: Must use `[dialogue]` brackets notation in Rive for JavaScript discoverability
+3. **Debug Logging**: Comprehensive logging for all API operations with current/new value verification
 
 ### Patterns Learned This Session
-1. **MVP Boolean States**: Simple boolean→trigger transitions more practical than complex conditional states
-2. **Rive Data Binding**: Use View Model properties (modern) instead of legacy inputs system
-3. **UI Progressive Enhancement**: States section can be hidden/shown based on Rive input availability
+1. **API vs Visual Split**: JavaScript API can work correctly while Rive visual rendering fails independently
+2. **MCP Troubleshooting**: Kill stale processes with `pkill -f "chrome-devtools-mcp"` before reconnecting
+3. **Chrome DevTools for Debugging**: Essential for verifying API calls and state machine transitions
 
 ### Code Standards
-- State input names must match between JS config and Rive exactly
-- Use debug logging for all state machine operations
-- Handle missing inputs gracefully (type checking in setBoolean/setNumber)
+- Log all text run operations with before/after values
+- Handle text run not found gracefully (return false, warn)
+- Sample dialogues should be under 100 characters for fixed bubble size
 
 ---
 
 ## Known Issues & Tech Debt
 
+### Critical Blocker
+- **Text Not Visible**: Speech bubble shows/hides correctly but text content invisible - Rive Editor configuration issue
+
 ### Discovered This Session
-- **Chrome DevTools MCP**: Connection problems during browser testing session
-- **Asset Count Mismatch**: README says ~130 PNGs, actual count is 152
+- **Chrome DevTools MCP**: Occasional connection conflicts require process cleanup
+- **`setTextRunValue()` Documentation**: Marked as deprecated but still functional and documented
 
 ### Open Issues
-- energyLevel input ready but no visual effect yet
-- catdog-orange-mouthshapes folder not integrated in main config
-- No automated testing (manual browser testing only)
+- Speech bubble size is fixed - no auto-sizing for long text (Phase 1 limitation)
+- energyLevel input still not wired to visual effects in Rive
+- catdog-orange-mouthshapes folder remains unintegrated
 
 ### Blockers
-- None - all systems operational
+- **Must fix text rendering** before speech bubble system is complete
 
 ---
 
@@ -154,11 +167,15 @@ lsof -ti:8080 | xargs kill -9
 # Open in browser
 open http://localhost:8080
 
-# Hard refresh (clear browser cache)
+# Hard refresh (clear browser cache after .riv changes)
 # Cmd+Shift+R in browser
 
+# Fix Chrome DevTools MCP connection issues
+pkill -f "chrome-devtools-mcp"
+# Then restart Claude Code session
+
 # Git workflow
-git add -A && git commit -m "message" && git push
+git add -A && git commit -m "Complete speech bubble system" && git push
 git pull origin main
 
 # No build/test commands - vanilla JS project
@@ -168,29 +185,31 @@ git pull origin main
 
 ## Success Criteria for Next Session
 
-- [ ] energyLevel slider produces visible character changes
-- [ ] All 11 buddy variants work with energyLevel effects
-- [ ] Decision made on catdog-orange-mouthshapes integration
-- [ ] No console errors when changing states
-- [ ] Documentation updated to reflect new capabilities
+- [ ] Text appears in speech bubble when clicking Sample 1 button
+- [ ] Custom text input shows user-typed text in bubble
+- [ ] All 11 buddy variants display speech bubble text correctly
+- [ ] Speech bubble text updates dynamically via setTextRunValue()
+- [ ] No console errors related to text run operations
+- [ ] Commit speech bubble feature as complete
 
 ---
 
 ## Quick Start for Next Session
 
-1. Read `CLAUDE.md` first (especially Rive MCP connection setup)
-2. Check current state: `git status && python3 -m http.server 8080`
-3. Open http://localhost:8080 - verify States section visible and isHappy/isReading working
-4. Open Rive Early Access with `reading-buddy.riv` to work on energyLevel wiring
-5. Start with Task 1 (energyLevel animation speed)
+1. **Rive Setup**: Open Rive Early Access with `reading-buddy.riv` file loaded
+2. **Check Connection**: Verify Rive MCP with `mcp__rive__listStateMachines` in Claude
+3. **Debug Current State**: Open http://localhost:8080 → click Sample 1 → verify bubble shows but text missing
+4. **Fix Text Element**: Follow Task 1 steps to check text opacity, fill color, animation keyframes
+5. **Test Fix**: Export .riv → hard refresh browser → test Sample 1 again
 
 ---
 
 ## Session Metrics
 
-- **Files modified:** 3 (`index.html`, `js/config.js`, `public/rive/reading-buddy.riv`)
-- **Features completed:** Boolean state inputs with UI controls
-- **State inputs added:** isHappy (boolean), isReading (boolean), energyLevel (number)
-- **Commits:** 1 feature commit + push to origin
-- **UI improvements:** States section unhidden with working controls
-- **Time elapsed:** ~45 minutes
+- **Files modified:** 6 (config.js, rive-controller.js, ui-controls.js, index.html, css/styles.css, reading-buddy.riv)
+- **Features completed:** Speech bubble API, UI controls, state machine integration (95% complete)
+- **Lines of code:** ~100 lines added across JS files
+- **UI components:** 1 text input, 1 send button, 1 hide button, 5 sample dialogue buttons
+- **Rive features:** SpeechBubbleLayer, text run export, 2-state transitions
+- **Critical discovery:** JavaScript API works, issue is Rive visual configuration
+- **Next session ETA:** 15-30 minutes to fix text element and test
