@@ -2,7 +2,7 @@
 // UI event handlers and control panel setup
 
 import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS } from './config.js';
-import { switchBuddy, fireTrigger, setBoolean, setNumber, getCurrentBuddy, setDialogueText } from './rive-controller.js';
+import { switchBuddy, fireTrigger, setBoolean, getBoolean, setNumber, getCurrentBuddy, setDialogueText, setOnBubbleClick } from './rive-controller.js';
 import { log } from './logger.js';
 
 /**
@@ -67,7 +67,7 @@ function initBuddySelector() {
 }
 
 /**
- * Set up dialogue text input
+ * Set up dialogue text input with speech bubble control
  */
 function initDialogueInput() {
     const input = document.getElementById('dialogueInput');
@@ -75,24 +75,42 @@ function initDialogueInput() {
 
     if (!input || !submitBtn) return;
 
+    // Set up bubble click handler (Rive fires the trigger, we just log it)
+    setOnBubbleClick(() => {
+        log('Speech bubble hidden (clicked)');
+    });
+
     const submitDialogue = () => {
         const text = input.value.trim();
-        if (text) {
-            setDialogueText(text);
-            // Visual feedback
-            submitBtn.classList.add('triggered');
-            setTimeout(() => submitBtn.classList.remove('triggered'), 200);
+        if (!text) return;
+
+        // Always update the text in View Model
+        setDialogueText(text);
+
+        // Check if bubble is already visible
+        const isVisible = getBoolean('isBubbleVisible');
+
+        if (!isVisible) {
+            // Show bubble (triggers animation)
+            fireTrigger('trig_showBubble');
+            setBoolean('isBubbleVisible', true);
+            log(`Speech bubble shown: "${text}"`);
+        } else {
+            // Just update text, no animation re-trigger
+            log(`Speech bubble text updated: "${text}"`);
         }
+
+        // Visual feedback on button
+        submitBtn.classList.add('triggered');
+        setTimeout(() => submitBtn.classList.remove('triggered'), 200);
+
+        // Clear input
+        input.value = '';
     };
 
-    // Submit on button click
     submitBtn.addEventListener('click', submitDialogue);
-
-    // Submit on Enter key
     input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            submitDialogue();
-        }
+        if (e.key === 'Enter') submitDialogue();
     });
 }
 

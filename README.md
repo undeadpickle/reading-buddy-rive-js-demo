@@ -6,9 +6,10 @@ Interactive animated character demo using [Rive](https://rive.app) with dynamic 
 
 - **11 Character Variants**: catdog-orange, catdog-blue, catdog-green, catdog-purple, catdog-white, kitten-ninja, master-hamster, barloc, george, maddie, scout
 - **Dynamic Asset Swapping**: 11-12 body parts per character loaded via OOB asset system
+- **Interactive Speech Bubbles**: Click-to-show/hide speech bubbles with smart text updating and state tracking
 - **Dialogue Text System**: Dynamic text display using Rive's View Model data binding with custom input
-- **State-Driven Behaviors**: Boolean inputs (isHappy, isReading) and number input (energyLevel) for interactive character states
-- **Trigger Animations**: Wave and jump animations with smooth transitions back to idle
+- **State-Driven Behaviors**: Boolean inputs (isHappy, isReading, isBubbleVisible) and number input (energyLevel) for interactive character states
+- **Trigger Animations**: Wave, jump, and speech bubble animations with smooth transitions back to idle
 - **Auto-Blink System**: Characters blink naturally without manual triggering
 - **Zero Build Process**: Vanilla JavaScript with ES modules - just serve and run
 

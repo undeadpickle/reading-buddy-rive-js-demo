@@ -11,6 +11,7 @@ let stateMachineInputs = {};
 let currentBuddyId = null;
 let isRiveLoaded = false;
 let viewModelInstance = null;
+let onBubbleClickCallback = null;
 
 /**
  * Initialize Rive with a specific buddy
@@ -91,6 +92,14 @@ export async function initRive(buddyId, canvas) {
                         const nonBlinkStates = event.data.filter(s => !s.toLowerCase().includes('blink'));
                         if (nonBlinkStates.length > 0) {
                             log(`State changed: ${nonBlinkStates.join(', ')}`);
+                        }
+
+                        // Detect bubble hide (triggered by Rive listener click)
+                        if (event.data.includes('anime_bubble_hidden')) {
+                            // Sync JS state when bubble hides
+                            const input = stateMachineInputs['isBubbleVisible'];
+                            if (input) input.value = false;
+                            if (onBubbleClickCallback) onBubbleClickCallback();
                         }
                     }
                 },
@@ -254,6 +263,23 @@ export function setBoolean(name, value) {
 }
 
 /**
+ * Get a boolean input value
+ * @param {string} name
+ * @returns {boolean|null} - current value or null if not found
+ */
+export function getBoolean(name) {
+    if (!isRiveLoaded) return null;
+
+    const input = stateMachineInputs[name];
+    const riveRuntime = window.rive;
+
+    if (input && riveRuntime && input.type === riveRuntime.StateMachineInputType.Boolean) {
+        return input.value;
+    }
+    return null;
+}
+
+/**
  * Set a number input
  * @param {string} name
  * @param {number} value
@@ -316,6 +342,14 @@ export function setDialogueText(text) {
  */
 export function getInputs() {
     return stateMachineInputs;
+}
+
+/**
+ * Set callback for bubble click Rive event
+ * @param {Function} callback - called when bubble is clicked
+ */
+export function setOnBubbleClick(callback) {
+    onBubbleClickCallback = callback;
 }
 
 /**

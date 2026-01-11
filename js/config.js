@@ -46,9 +46,9 @@ export const BODY_PARTS = [
 // Note: These are View Model properties (triggers) in Rive
 export const STATE_INPUTS = {
     // Triggers (fire once, auto-reset) - must match Rive input names exactly
-    triggers: ['trig_wave', 'trig_jump'],
+    triggers: ['trig_wave', 'trig_jump', 'trig_showBubble', 'trig_hideBubble'],
     // Booleans (on/off states) - must match Rive input names exactly
-    booleans: ['isHappy', 'isReading'],
+    booleans: ['isHappy', 'isReading', 'isBubbleVisible'],
     // Numbers (continuous values 0-100) - coming soon, not yet wired in Rive
     numbers: ['energyLevel'],
 };
