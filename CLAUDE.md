@@ -180,10 +180,8 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 - `Missing asset in cache: tail` - Expected for tailless buddies (master-hamster, george, maddie)
 
 ### View Model Data Binding Requires Runtime 2.33+
-- **Symptom:** `riveInstance.viewModelInstance` returns null, log shows "No View Model instance found"
-- **Cause:** View Model API was added in newer Rive runtime versions
-- **Fix:** Update CDN script in `index.html` to `@rive-app/canvas@2.33.1` or later
-- **Check version:** Search for `rive-app/canvas@` in index.html
+- **Symptom:** `riveInstance.viewModelInstance` returns null
+- **Fix:** Update CDN in `index.html` to `@rive-app/canvas@2.33.1`+, ensure `autoBind: true` in Rive constructor
 
 ### Fonts Not Rendering with Custom assetLoader
 When using a custom `assetLoader` (for OOB image swapping), **embedded fonts won't render** if you just `return false`. You must explicitly decode and set them:
