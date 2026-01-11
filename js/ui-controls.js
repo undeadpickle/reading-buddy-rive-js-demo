@@ -2,7 +2,7 @@
 // UI event handlers and control panel setup
 
 import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS } from './config.js';
-import { switchBuddy, fireTrigger, setBoolean, setNumber, getCurrentBuddy } from './rive-controller.js';
+import { switchBuddy, fireTrigger, setBoolean, setNumber, getCurrentBuddy, setDialogueText } from './rive-controller.js';
 import { log } from './logger.js';
 
 /**
@@ -10,6 +10,7 @@ import { log } from './logger.js';
  */
 export function initControls() {
     initBuddySelector();
+    initDialogueInput();
     initAnimationTriggers();
     initStateControls();
     initEventSimulators();
@@ -63,6 +64,36 @@ function initBuddySelector() {
     if (defaultThumb) {
         defaultThumb.classList.add('active');
     }
+}
+
+/**
+ * Set up dialogue text input
+ */
+function initDialogueInput() {
+    const input = document.getElementById('dialogueInput');
+    const submitBtn = document.getElementById('dialogueSubmit');
+
+    if (!input || !submitBtn) return;
+
+    const submitDialogue = () => {
+        const text = input.value.trim();
+        if (text) {
+            setDialogueText(text);
+            // Visual feedback
+            submitBtn.classList.add('triggered');
+            setTimeout(() => submitBtn.classList.remove('triggered'), 200);
+        }
+    };
+
+    // Submit on button click
+    submitBtn.addEventListener('click', submitDialogue);
+
+    // Submit on Enter key
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            submitDialogue();
+        }
+    });
 }
 
 /**

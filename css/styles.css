@@ -125,6 +125,54 @@ body {
     object-fit: contain;
 }
 
+/* Text Input Group */
+.text-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.text-input-group input[type="text"] {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-family: var(--font-family);
+    background: var(--panel-bg);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.text-input-group input[type="text"]:focus {
+    border-color: var(--accent);
+}
+
+.text-input-group input[type="text"]::placeholder {
+    color: var(--text-muted);
+}
+
+.text-input-group button {
+    padding: var(--spacing-sm) var(--spacing);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.text-input-group button:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.text-input-group button:active {
+    transform: scale(0.98);
+}
+
 /* Button Groups */
 .button-group {
     display: flex;

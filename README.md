@@ -55,7 +55,7 @@ The OOB asset pattern allows the same Rive file to display different character s
 
 ## Tech Stack
 
-- **Rive Runtime**: `@rive-app/canvas@2.21.6` (via CDN)
+- **Rive Runtime**: `@rive-app/canvas@2.33.1` (via CDN)
 - **Frontend**: Vanilla JavaScript (ES Modules)
 - **Server**: Any static file server (Python, Node, etc.)
 

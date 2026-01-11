@@ -10,6 +10,7 @@ let riveInstance = null;
 let stateMachineInputs = {};
 let currentBuddyId = null;
 let isRiveLoaded = false;
+let viewModelInstance = null;
 
 /**
  * Initialize Rive with a specific buddy
@@ -65,6 +66,10 @@ export async function initRive(buddyId, canvas) {
                     } else {
                         log('No state machine configured (animations/states not yet added to .riv)');
                     }
+
+                    // Get View Model instance for data binding
+                    cacheViewModelInstance();
+
                     // Fit to canvas properly
                     riveInstance.resizeDrawingSurfaceToCanvas();
                     resolve(true);
@@ -82,7 +87,11 @@ export async function initRive(buddyId, canvas) {
 
                 onStateChange: (event) => {
                     if (event.data && event.data.length > 0) {
-                        log(`State changed: ${event.data.join(', ')}`);
+                        // Filter out blink states to reduce console noise
+                        const nonBlinkStates = event.data.filter(s => !s.toLowerCase().includes('blink'));
+                        if (nonBlinkStates.length > 0) {
+                            log(`State changed: ${nonBlinkStates.join(', ')}`);
+                        }
                     }
                 },
             };
@@ -146,6 +155,39 @@ function cacheStateMachineInputs() {
         log(`Cached ${Object.keys(stateMachineInputs).length} state machine inputs`);
     } catch (err) {
         log(`Error caching inputs: ${err.message}`, 'warn');
+    }
+}
+
+/**
+ * Cache View Model instance for data binding
+ * Requires Rive runtime 2.33+ and autoBind: true
+ */
+function cacheViewModelInstance() {
+    if (!riveInstance) return;
+
+    try {
+        // With autoBind: true, viewModelInstance should be available
+        const vmInstance = riveInstance.viewModelInstance;
+
+        if (vmInstance) {
+            viewModelInstance = vmInstance;
+            log('View Model instance cached (BuddyViewModel)');
+        } else {
+            // Fallback: manually get and bind
+            const vm = riveInstance.viewModelByIndex?.(0);
+            if (vm) {
+                const inst = vm.defaultInstance?.();
+                if (inst) {
+                    viewModelInstance = inst;
+                    riveInstance.bindViewModelInstance?.(inst);
+                    log('View Model instance cached (manual bind)');
+                    return;
+                }
+            }
+            log('No View Model instance found - check Rive Editor setup', 'warn');
+        }
+    } catch (err) {
+        log(`Error caching View Model: ${err.message}`, 'warn');
     }
 }
 
@@ -237,6 +279,39 @@ export function setNumber(name, value) {
 }
 
 /**
+ * Set dialogue text via View Model data binding
+ * @param {string} text - The text to display
+ * @returns {boolean} - true if set successfully
+ */
+export function setDialogueText(text) {
+    if (!isRiveLoaded) {
+        log('Cannot set dialogue: Rive not loaded', 'warn');
+        return false;
+    }
+
+    if (!viewModelInstance) {
+        log('Cannot set dialogue: No View Model instance', 'warn');
+        return false;
+    }
+
+    try {
+        // Get the dialogueText property from the View Model
+        const dialogueTextProp = viewModelInstance.string('dialogueText');
+        if (dialogueTextProp) {
+            dialogueTextProp.value = text;
+            log(`Set dialogueText: "${text}"`);
+            return true;
+        } else {
+            log('dialogueText property not found in View Model', 'warn');
+            return false;
+        }
+    } catch (err) {
+        log(`Error setting dialogue: ${err.message}`, 'error');
+        return false;
+    }
+}
+
+/**
  * Get current state machine inputs (for debugging)
  */
 export function getInputs() {
@@ -276,6 +351,7 @@ export function cleanup() {
         riveInstance = null;
     }
     stateMachineInputs = {};
+    viewModelInstance = null;
     isRiveLoaded = false;
     log('Rive controller cleaned up');
 }
