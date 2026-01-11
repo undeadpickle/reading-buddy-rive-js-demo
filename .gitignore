@@ -11,3 +11,7 @@
 
 # Local MCP config (contains local paths)
 .mcp.json
+
+# Claude Code local files
+.claude/
+.planning/
