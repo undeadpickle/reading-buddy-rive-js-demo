@@ -1,0 +1,32 @@
+{
+  "success": 1,
+  "result": {
+    "numberOfStars": 0,
+    "dailyTasks": [
+      {
+        "taskId": 1,
+        "taskType": 1,
+        "userTaskId": null,
+        "textMessage": "Read for 5 minutes",
+        "completed": 0,
+        "presented": 0
+      },
+      {
+        "taskId": 2,
+        "taskType": 2,
+        "userTaskId": null,
+        "textMessage": "Read for 15 minutes",
+        "completed": 0,
+        "presented": 0
+      },
+      {
+        "taskId": 3,
+        "taskType": 3,
+        "userTaskId": null,
+        "textMessage": "Read for 25 minutes",
+        "completed": 0,
+        "presented": 0
+      }
+    ]
+  }
+}

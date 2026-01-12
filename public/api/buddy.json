@@ -1,0 +1,49 @@
+{
+  "success": 1,
+  "result": {
+    "id": 1,
+    "userId": 12345,
+    "name": "Orange Cat-Dog",
+    "displayName": "Orange Cat-Dog",
+    "buddyId": 1,
+    "hatched": 1,
+    "status": 0,
+    "assets": {
+      "baseUrl": "./public/reading-buddies/catdog-orange/",
+      "extension": ".png",
+      "version": 1,
+      "bodyParts": [
+        "armLeft",
+        "armRight",
+        "eyeLeft",
+        "eyeRight",
+        "head",
+        "headBack",
+        "legLeft",
+        "legRight",
+        "torso",
+        "eyeBlinkLeft",
+        "eyeBlinkRight",
+        "tail"
+      ]
+    },
+    "dialog": {
+      "adventure": [
+        ["Hi there, let's read!", "I found some books for you."],
+        ["-1 more minutes to go.", "You can do it!"],
+        ["We did it!", "Let's read again tomorrow!", "I love reading books with you.", "Great job! That was fun.", "Want to keep reading?"]
+      ],
+      "celebration": [
+        ["We read -1 minutes!", "Pop to celebrate!"],
+        ["Woohoo!", "You're amazing!", "That was awesome!"]
+      ],
+      "hatch": [
+        ["Hello there!", "I'm your reading buddy!"]
+      ],
+      "celebrationEgg": [
+        [""]
+      ]
+    },
+    "equipped": []
+  }
+}
