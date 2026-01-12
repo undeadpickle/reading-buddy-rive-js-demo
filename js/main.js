@@ -5,6 +5,7 @@ import { CONFIG } from './config.js';
 import { preloadAllBuddies } from './asset-loader.js';
 import { initRive, handleResize, cleanup } from './rive-controller.js';
 import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay } from './ui-controls.js';
+import { initGamificationUI } from './gamification-ui.js';
 import { log } from './logger.js';
 import * as dataAdapter from './data-adapter.js';
 
@@ -90,6 +91,7 @@ async function init() {
 
         // Phase 2: Initialize UI controls
         initControls();
+        initGamificationUI();
 
         // Wait for preload to complete
         await preloadPromise;
