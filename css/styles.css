@@ -464,6 +464,39 @@ body {
     font-family: var(--font-mono);
 }
 
+/* Star Progress (Phase 2A) */
+.star-progress {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+}
+
+.star {
+    width: 32px;
+    height: 32px;
+    font-size: 28px;
+    transition: transform 0.3s ease;
+}
+
+.star::before {
+    content: '☆';
+    color: #ccc;
+}
+
+.star.filled::before {
+    content: '★';
+    color: #ffc107;
+}
+
+.star.earning {
+    animation: star-pop 0.5s ease;
+}
+
+@keyframes star-pop {
+    50% { transform: scale(1.4); }
+}
+
 /* Mobile Responsive */
 @media (max-width: 900px) {
     .demo-container {
