@@ -69,3 +69,18 @@ export const EVENTS = {
         description: 'Earned a new badge'
     },
 };
+
+// Maps Epic's Lottie marker names → Rive state machine inputs
+// Used by data-adapter.js to translate playSegment() calls
+export const ANIMATION_MAPPING = {
+    'idle': { trigger: null },                                              // Default state, no trigger needed
+    'giggle': { trigger: 'trig_wave' },                                     // Tap response
+    'wave': { trigger: 'trig_wave' },                                       // Greeting
+    'jump': { trigger: 'trig_jump' },                                       // Excitement
+    'feeding': { trigger: 'trig_wave', boolean: 'isHappy', value: true },   // Reward animation
+    'celebrate': { trigger: 'trig_jump' },                                  // Star earned
+    'hooray': { trigger: 'trig_wave' },                                     // Generic celebration
+};
+
+// Dialogue contexts from Epic's API (keys in buddy.dialog object)
+export const DIALOGUE_CONTEXTS = ['adventure', 'celebration', 'hatch', 'celebrationEgg'];
