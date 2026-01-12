@@ -1,6 +1,6 @@
 # Current Status
 
-**Last Updated:** Phase 3B complete
+**Last Updated:** Phase 3C complete
 
 ## Progress
 
@@ -11,23 +11,23 @@
 - [x] Phase 2B: Gamification controls
 - [x] Phase 3A: Wire gamification
 - [x] Phase 3B: Wire dialogue system
-- [ ] Phase 3C: Canvas tap response
+- [x] Phase 3C: Canvas tap response
 - [ ] Phase 4: Documentation
 
-## Current Phase: 3C
+## Current Phase: 4
 
-**Next task:** Add canvas tap response
+**Next task:** Documentation
 
-**What it does:** Click on Rive canvas → play giggle animation (maps to `trig_wave`) + show random adventure dialogue in speech bubble.
+**What it does:** Update project documentation to explain the compatibility layer architecture, API mapping, and usage.
 
 ## Recent Commits
 
 ```
-b24c084 Phase 3B: Wire dialogue system to data adapter
+9702461 Phase 3C: Add canvas tap response
+ff7aa76 Phase 3B: Wire dialogue system to data adapter
 2792d67 Phase 3A: Wire gamification buttons to data adapter
 58be0b4 Phase 2B: Add gamification controls and UI module
 3a3a8a3 Phase 2A: Add star counter UI markup
-999f896 Phase 1C: Add data adapter module
 ```
 
 ## Files Created/Modified So Far
@@ -37,7 +37,7 @@ b24c084 Phase 3B: Wire dialogue system to data adapter
 - `js/config.js` - Added ANIMATION_MAPPING and DIALOGUE_CONTEXTS exports
 - `js/data-adapter.js` - Epic API → Rive compatibility layer, added `getAllDialogues()` (Phase 3B)
 - `js/gamification-ui.js` - Star counter state and animations (NEW, Phase 2B), wired to data adapter (Phase 3A)
-- `js/ui-controls.js` - Added `populateDialoguePresets()` for API-driven dropdown (Phase 3B)
+- `js/ui-controls.js` - Added `populateDialoguePresets()` (Phase 3B), canvas click handler (Phase 3C)
 - `js/main.js` - Added data adapter + gamification UI imports, calls `populateDialoguePresets()` (Phase 3B)
 - `index.html` - Added star-progress UI (2A) + gamification controls (2B)
 - `css/styles.css` - Added star styles (Phase 2A)
