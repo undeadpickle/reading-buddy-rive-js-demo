@@ -4,7 +4,7 @@
 import { CONFIG } from './config.js';
 import { preloadAllBuddies } from './asset-loader.js';
 import { initRive, handleResize, cleanup } from './rive-controller.js';
-import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay } from './ui-controls.js';
+import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay, populateDialoguePresets } from './ui-controls.js';
 import { initGamificationUI } from './gamification-ui.js';
 import { log } from './logger.js';
 import * as dataAdapter from './data-adapter.js';
@@ -115,8 +115,9 @@ async function init() {
 
         updateCurrentBuddyDisplay(CONFIG.DEFAULT_BUDDY);
 
-        // Load buddy data from mock API and test dialogue
+        // Load buddy data from mock API and populate dialogue presets
         await dataAdapter.loadBuddyData();
+        populateDialoguePresets();
         log(`Test dialogue: "${dataAdapter.getDialogue('adventure')}"`);
 
         // Phase 4: Start FPS counter

@@ -70,6 +70,30 @@ export function getDialogue(context) {
 }
 
 /**
+ * Get all dialogue strings for a context (flattened from stages)
+ * @param {string} context - 'adventure', 'celebration', 'hatch', or 'celebrationEgg'
+ * @returns {string[]} - Array of unique dialogue strings, filtered for placeholders
+ */
+export function getAllDialogues(context) {
+    if (!buddyData || !buddyData.dialog) {
+        log('No buddy data loaded, cannot get dialogues', 'warn');
+        return [];
+    }
+
+    const stages = buddyData.dialog[context];
+    if (!stages || stages.length === 0) {
+        log(`No dialogues found for context: ${context}`, 'warn');
+        return [];
+    }
+
+    // Flatten all stages, filter empty/placeholder strings
+    const phrases = stages.flat().filter(s => s && s !== '-1' && !s.includes('-1'));
+
+    // Return unique phrases
+    return [...new Set(phrases)];
+}
+
+/**
  * Translate Lottie playSegment marker to Rive trigger/boolean
  * This is the core compatibility function - Epic calls playSegment('wave'),
  * we translate that to Rive's fireTrigger('trig_wave')

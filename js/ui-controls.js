@@ -4,6 +4,7 @@
 import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS } from './config.js';
 import { switchBuddy, fireTrigger, setBoolean, getBoolean, setNumber, getCurrentBuddy, setDialogueText, setOnBubbleClick } from './rive-controller.js';
 import { log } from './logger.js';
+import { getAllDialogues } from './data-adapter.js';
 
 /**
  * Initialize all UI controls
@@ -139,6 +140,30 @@ function initDialogueInput() {
             presetsDropdown.selectedIndex = 0;
         });
     }
+}
+
+/**
+ * Populate dialogue presets dropdown with phrases from API
+ * Must be called after loadBuddyData() completes
+ */
+export function populateDialoguePresets() {
+    const select = document.getElementById('dialoguePresets');
+    if (!select) return;
+
+    const phrases = getAllDialogues('adventure');
+
+    // Clear existing options (keep first placeholder)
+    while (select.options.length > 1) select.remove(1);
+
+    // Add API phrases
+    phrases.forEach(phrase => {
+        const option = document.createElement('option');
+        option.value = phrase;
+        option.textContent = phrase;
+        select.appendChild(option);
+    });
+
+    log(`Loaded ${phrases.length} dialogue phrases from API`);
 }
 
 /**
