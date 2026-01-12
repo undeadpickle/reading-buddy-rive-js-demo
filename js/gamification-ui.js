@@ -3,6 +3,7 @@
 // NOTE: Placeholder stars for testing data flow. Real stars will be Rive scene.
 
 import { log } from './logger.js';
+import * as dataAdapter from './data-adapter.js';
 
 let currentStars = 0;
 let maxStars = 3;
@@ -21,6 +22,10 @@ export function initGamificationUI() {
                 animateStarEarn(currentStars);
                 updateStars(currentStars, maxStars);
                 log(`Star earned! (${currentStars}/${maxStars})`);
+
+                // Sync data adapter + trigger Rive celebrate animation
+                dataAdapter.earnStar();
+                dataAdapter.playSegment('celebrate');
             } else {
                 log('Max stars reached', 'warn');
             }
@@ -32,6 +37,9 @@ export function initGamificationUI() {
             currentStars = 0;
             updateStars(0, maxStars);
             log('Stars reset');
+
+            // Sync data adapter
+            dataAdapter.resetStars();
         });
     }
 
