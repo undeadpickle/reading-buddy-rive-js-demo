@@ -4,7 +4,7 @@
 import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS } from './config.js';
 import { switchBuddy, fireTrigger, setBoolean, getBoolean, setNumber, getCurrentBuddy, setDialogueText, setOnBubbleClick } from './rive-controller.js';
 import { log } from './logger.js';
-import { getAllDialogues } from './data-adapter.js';
+import { getAllDialogues, getDialogue, playSegment } from './data-adapter.js';
 
 /**
  * Initialize all UI controls
@@ -16,6 +16,7 @@ export function initControls() {
     initStateControls();
     initEventSimulators();
     initDebugPanel();
+    initCanvasClickHandler();
 
     log('UI controls initialized');
 }
@@ -287,6 +288,35 @@ function initDebugPanel() {
             }
         });
     }
+}
+
+/**
+ * Set up canvas tap response
+ * Click canvas → giggle animation + random adventure dialogue
+ */
+function initCanvasClickHandler() {
+    const canvas = document.getElementById('riveCanvas');
+    if (!canvas) return;
+
+    canvas.addEventListener('click', () => {
+        // Play giggle animation (maps to trig_wave via data adapter)
+        playSegment('giggle');
+
+        // Get random adventure dialogue
+        const dialogue = getDialogue('adventure');
+        if (!dialogue) return;
+
+        // Set dialogue and show bubble
+        setDialogueText(dialogue);
+
+        const isVisible = getBoolean('isBubbleVisible');
+        if (!isVisible) {
+            fireTrigger('trig_showBubble');
+            setBoolean('isBubbleVisible', true);
+        }
+
+        log(`Canvas tap: giggle + "${dialogue}"`);
+    });
 }
 
 /**
