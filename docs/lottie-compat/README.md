@@ -52,3 +52,8 @@ Epic uses `playSegments([startFrame, endFrame])` with named markers. We map mark
 - **Current status:** [STATUS.md](./STATUS.md)
 - **Phase details:** [phases/](./phases/)
 - **API reference:** [reference/](./reference/)
+- **Terminology:** [reference/terminology.md](./reference/terminology.md)
+
+## Background Docs
+
+- **[Epic Web App Technical Architecture](../Epic%20Web%20App%20-%20Adventures%20Page%20Technical%20Architecture.md)** - Deep dive into how Epic's current Lottie implementation works (API responses, markers, component structure, what's in Lottie vs HTML)
