@@ -112,6 +112,33 @@ function initDialogueInput() {
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') submitDialogue();
     });
+
+    // Preset dropdown handler
+    const presetsDropdown = document.getElementById('dialoguePresets');
+    if (presetsDropdown) {
+        presetsDropdown.addEventListener('change', () => {
+            const text = presetsDropdown.value;
+            if (!text) return; // Ignore placeholder selection
+
+            // Populate input field
+            input.value = text;
+
+            // Update View Model and show bubble
+            setDialogueText(text);
+
+            const isVisible = getBoolean('isBubbleVisible');
+            if (!isVisible) {
+                fireTrigger('trig_showBubble');
+                setBoolean('isBubbleVisible', true);
+                log(`Speech bubble shown: "${text}"`);
+            } else {
+                log(`Speech bubble text updated: "${text}"`);
+            }
+
+            // Reset dropdown to placeholder
+            presetsDropdown.selectedIndex = 0;
+        });
+    }
 }
 
 /**
