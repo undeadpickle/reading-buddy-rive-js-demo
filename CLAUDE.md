@@ -2,6 +2,28 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Active Project: Epic Lottie → Rive Compatibility Layer
+
+**Branch:** `feature/epic-lottie-compat`
+
+**IMPORTANT:** At the start of each session, read `docs/lottie-compat/STATUS.md` to see current progress and next task.
+
+**Quick Links:**
+- [STATUS.md](docs/lottie-compat/STATUS.md) - Current progress (read this first!)
+- [README.md](docs/lottie-compat/README.md) - Project overview
+- [phases/](docs/lottie-compat/phases/) - Detailed phase instructions
+- [reference/](docs/lottie-compat/reference/) - API structures & animation mapping
+
+**Goal:** Create compatibility layer so Rive can receive data in same format Epic sends to Lottie. Enables A/B testing without changing Epic's data layer.
+
+**Collaboration Rules:**
+- Check with user before non-obvious decisions
+- Show code as it's written, not after
+- Commit only after user verification
+- Update STATUS.md after each phase
+
+---
+
 ## Project Overview
 
 Reading Buddy Rive Demo - A vanilla JS interactive character demo using Rive animations with OOB (out-of-band) asset swapping. Displays animated "reading buddy" characters with 11 variants and dynamic PNG body part swapping.
