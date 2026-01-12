@@ -1,12 +1,12 @@
 # Current Status
 
-**Last Updated:** Phase 1B complete
+**Last Updated:** Phase 1C complete
 
 ## Progress
 
 - [x] Phase 1A: Mock API data files
 - [x] Phase 1B: Animation mapping config
-- [ ] Phase 1C: Data adapter module
+- [x] Phase 1C: Data adapter module
 - [ ] Phase 2A: Star counter UI
 - [ ] Phase 2B: Gamification controls
 - [ ] Phase 3A: Wire gamification
@@ -14,16 +14,17 @@
 - [ ] Phase 3C: Canvas tap response
 - [ ] Phase 4: Documentation
 
-## Current Phase: 1C
+## Current Phase: 2A
 
-**Next task:** Create `js/data-adapter.js` module
+**Next task:** Create star counter UI component
 
-**What it does:** Provides functions to load buddy data, get dialogue, translate Lottie playSegment calls to Rive triggers, and manage star progress.
+**What it does:** Display 3 stars (empty/filled) to show daily reading progress. Will be wired to `dataAdapter.getStarProgress()` in Phase 3.
 
 ## Recent Commits
 
 ```
-(pending) Phase 1B: Add animation mapping config
+7b67fd9 Phase 1C: Add data adapter module
+147423d Phase 1B: Add animation mapping config
 c76f84d Phase 1A: Add mock API data files matching Epic structure
 ```
 
@@ -32,6 +33,8 @@ c76f84d Phase 1A: Add mock API data files matching Epic structure
 - `public/api/buddy.json` - Mock getBuddy response (Epic exact structure)
 - `public/api/daily-tasks.json` - Mock getTasksForToday response
 - `js/config.js` - Added ANIMATION_MAPPING and DIALOGUE_CONTEXTS exports
+- `js/data-adapter.js` - Epic API → Rive compatibility layer (NEW)
+- `js/main.js` - Added data adapter import and test log
 
 ## Rollback Point
 

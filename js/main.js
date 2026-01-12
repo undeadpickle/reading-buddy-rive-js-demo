@@ -6,6 +6,7 @@ import { preloadAllBuddies } from './asset-loader.js';
 import { initRive, handleResize, cleanup } from './rive-controller.js';
 import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay } from './ui-controls.js';
 import { log } from './logger.js';
+import * as dataAdapter from './data-adapter.js';
 
 // Re-export for backwards compatibility
 export { log };
@@ -111,6 +112,10 @@ async function init() {
         }
 
         updateCurrentBuddyDisplay(CONFIG.DEFAULT_BUDDY);
+
+        // Load buddy data from mock API and test dialogue
+        await dataAdapter.loadBuddyData();
+        log(`Test dialogue: "${dataAdapter.getDialogue('adventure')}"`);
 
         // Phase 4: Start FPS counter
         initFPSCounter();
