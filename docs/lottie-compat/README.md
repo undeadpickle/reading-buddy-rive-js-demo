@@ -38,14 +38,14 @@ Epic uses `playSegments([startFrame, endFrame])` with named markers. We map mark
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1A | Mock API data files | Done |
-| 1B | Animation mapping config | Pending |
-| 1C | Data adapter module | Pending |
-| 2A | Star counter UI | Pending |
-| 2B | Gamification controls | Pending |
-| 3A | Wire gamification | Pending |
-| 3B | Wire dialogue system | Pending |
-| 3C | Canvas tap response | Pending |
-| 4 | Documentation | Pending |
+| 1B | Animation mapping config | Done |
+| 1C | Data adapter module | Done |
+| 2A | Star counter UI | Done |
+| 2B | Gamification controls | Done |
+| 3A | Wire gamification | Done |
+| 3B | Wire dialogue system | Done |
+| 3C | Canvas tap response | Done |
+| 4 | Documentation | Done |
 
 ## Navigation
 
