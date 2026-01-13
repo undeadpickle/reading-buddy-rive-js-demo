@@ -1,6 +1,6 @@
 # Current Status
 
-**Last Updated:** All phases complete
+**Last Updated:** Phase 5 added
 
 ## Progress
 
@@ -13,10 +13,15 @@
 - [x] Phase 3B: Wire dialogue system
 - [x] Phase 3C: Canvas tap response
 - [x] Phase 4: Documentation
+- [ ] Phase 5A: Add trig_giggle animation (Rive)
+- [ ] Phase 5B: Add trig_celebrate animation (Rive)
+- [ ] Phase 5C: Update JS config
 
-## Status: COMPLETE
+## Status: IN PROGRESS
 
-All phases finished. See [lottie-compat-layer.md](../lottie-compat-layer.md) for integration guide.
+Phase 5 adds distinct animations for tap response (`trig_giggle`) and star celebration (`trig_celebrate`).
+
+See [phase-5-rive-enhancements.md](./phases/phase-5-rive-enhancements.md) for detailed instructions.
 
 ## Recent Commits
 

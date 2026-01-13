@@ -46,6 +46,9 @@ Epic uses `playSegments([startFrame, endFrame])` with named markers. We map mark
 | 3B | Wire dialogue system | Done |
 | 3C | Canvas tap response | Done |
 | 4 | Documentation | Done |
+| 5A | trig_giggle animation (Rive) | Pending |
+| 5B | trig_celebrate animation (Rive) | Pending |
+| 5C | JS config update | Pending |
 
 ## Navigation
 
