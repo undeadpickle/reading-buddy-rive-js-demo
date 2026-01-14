@@ -1,5 +1,7 @@
 ## Epic Page - Complete Technical Architecture
 
+> **Reference Screenshots:** See [reference-screenshots/](reference-screenshots/) for visual context of the pages described here.
+
 ### Tech Stack
 
 | Layer             | Technology                                                               |
@@ -85,6 +87,8 @@ The skeleton has **66 named markers** that define animation segments. The Angula
 
 ### Key Angular Components
 
+![Adventures Page](reference-screenshots/screencapture-getepic-app-adventures-2026-01-14-13_37_54.png)
+
 ```
 epic-adventures
 ├── epic-reading-buddy-interactive
@@ -150,6 +154,8 @@ epic-adventures
 ---
 
 ### Mystery Chest System
+
+![Mystery Chest Modal](reference-screenshots/screencapture-getepic-app-3star-mysterychest-2026-01-14-13_37_54.png)
 
 **Progress tracked via:**
 

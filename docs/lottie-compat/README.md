@@ -61,3 +61,4 @@ Epic uses `playSegments([startFrame, endFrame])` with named markers. We map mark
 
 - **[Epic Rive Integration Guide](../epic-rive-integration-guide.md)** - Production-ready guide for integrating Rive into Epic (assetLoader patterns, gotchas, migration checklist)
 - **[Epic Web App Technical Architecture](../Epic%20Web%20App%20-%20Adventures%20Page%20Technical%20Architecture.md)** - Deep dive into how Epic's current Lottie implementation works (API responses, markers, component structure, what's in Lottie vs HTML)
+- **[Reference Screenshots](../reference-screenshots/)** - Visual context for the Epic Adventures page and Mystery Chest modal
