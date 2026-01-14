@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **IMPORTANT:** At the start of each session, read `docs/lottie-compat/STATUS.md` to see current progress and next task.
 
 **Quick Links:**
+
 - [STATUS.md](docs/lottie-compat/STATUS.md) - Current progress (read this first!)
 - [README.md](docs/lottie-compat/README.md) - Project overview
 - [phases/](docs/lottie-compat/phases/) - Detailed phase instructions
@@ -17,6 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Goal:** Create compatibility layer so Rive can receive data in same format Epic sends to Lottie. Enables A/B testing without changing Epic's data layer.
 
 **Collaboration Rules:**
+
 - Check with user before non-obvious decisions
 - Show code as it's written, not after
 - Commit only after user verification
@@ -70,6 +72,7 @@ git pull origin main
 3. **Restart Claude Code** - MCP connections are established at startup; restart the session after Rive is running
 
 4. **Check .mcp.json config** - Should contain:
+
    ```json
    {
      "mcpServers": {
@@ -85,7 +88,9 @@ git pull origin main
 6. **Rive version issue?** - Make sure you're running Rive Early Access (not standard Rive) - MCP is only available in Early Access
 
 ### Chrome DevTools MCP Issues
+
 If Chrome DevTools MCP has connection problems (browser already running error):
+
 ```bash
 # Kill stale browser processes
 pkill -f "chrome-devtools-mcp"
@@ -113,24 +118,24 @@ pkill -f "chrome-devtools-mcp"
 
 ```javascript
 assetLoader: async (asset, bytes) => {
-    // Fonts: must explicitly decode even when embedded (see "Fonts Not Rendering" gotcha)
-    if (asset.isFont && bytes.length > 0) {
-        const font = await rive.decodeFont(bytes);
-        asset.setFont(font);
-        font.unref();
-        return true;
-    }
-    // Other embedded/CDN assets: let Rive handle
-    if (bytes.length > 0 || asset.cdnUuid?.length > 0) return false;
-    // OOB images: load from cache
-    if (asset.isImage) {
-        const image = await rive.decodeImage(imageBytes);
-        asset.setRenderImage(image);
-        image.unref(); // CRITICAL: Prevents memory leak
-        return true;
-    }
-    return false;
-}
+  // Fonts: must explicitly decode even when embedded (see "Fonts Not Rendering" gotcha)
+  if (asset.isFont && bytes.length > 0) {
+    const font = await rive.decodeFont(bytes);
+    asset.setFont(font);
+    font.unref();
+    return true;
+  }
+  // Other embedded/CDN assets: let Rive handle
+  if (bytes.length > 0 || asset.cdnUuid?.length > 0) return false;
+  // OOB images: load from cache
+  if (asset.isImage) {
+    const image = await rive.decodeImage(imageBytes);
+    asset.setRenderImage(image);
+    image.unref(); // CRITICAL: Prevents memory leak
+    return true;
+  }
+  return false;
+};
 ```
 
 Assets must be named exactly as defined in Rive Editor (case-sensitive): head, headBack, torso, armLeft, armRight, legLeft, legRight, eyeLeft, eyeRight, eyeBlinkLeft, eyeBlinkRight, tail.
@@ -153,10 +158,12 @@ public/
 - State machine inputs are View Model properties, not traditional inputs
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops
 - BlinkLayer auto-cycles through blink animations (no trigger needed)
+- Use the Context7 MCP for the latest documentation. use the librarie:s rive-app/rive-docs for API and docs
 
 ## Buddy Variants
 
 All buddies have standard body parts. Some buddies don't have tails:
+
 - **master-hamster**: No tail
 - **george**: No tail
 - **maddie**: No tail
@@ -183,6 +190,7 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 ## Gotchas & Troubleshooting
 
 ### Input Names Must Match Exactly
+
 - JS `config.js` input names must match Rive input names exactly (case-sensitive)
 - Current triggers: `trig_wave`, `trig_jump`
 - Current booleans: `isHappy`, `isReading`
@@ -190,29 +198,36 @@ Asset loading gracefully skips tail for buddies with `hasTail: false` in config.
 - Check debug log for `Input found: [name]` vs `[Type] not found: [name]`
 
 ### Browser Cache Issues
+
 - **Symptoms:** Old .riv file playing, assets not updating, animations not firing
 - **Quick fix:** Hard refresh `Cmd+Shift+R`
 - **Nuclear option:** Kill server (`lsof -ti:8080 | xargs kill -9`), restart, use incognito window
 
 ### Rive Export vs Save
+
 - **Save** only saves to Rive's cloud - doesn't update local .riv file
 - **Export** writes the actual .riv file to disk - required after making changes in Rive Editor
 
 ### Harmless Errors (Ignore These)
+
 - `Missing asset in cache: tail` - Expected for tailless buddies (master-hamster, george, maddie)
 
 ### View Model Data Binding Requires Runtime 2.33+
+
 - **Symptom:** `riveInstance.viewModelInstance` returns null
 - **Fix:** Update CDN in `index.html` to `@rive-app/canvas@2.33.1`+, ensure `autoBind: true` in Rive constructor
 
 ### Fonts Not Rendering with Custom assetLoader
+
 When using a custom `assetLoader` (for OOB image swapping), **embedded fonts won't render** if you just `return false`. You must explicitly decode and set them:
+
 ```javascript
 if (asset.isFont && bytes.length > 0) {
-    const font = await rive.decodeFont(bytes);
-    asset.setFont(font);
-    font.unref();
-    return true;
+  const font = await rive.decodeFont(bytes);
+  asset.setFont(font);
+  font.unref();
+  return true;
 }
 ```
+
 This applies even though Rive docs suggest `return false` should let Rive handle embedded assets automatically. The fix is in `js/asset-loader.js`.
