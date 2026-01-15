@@ -42,11 +42,27 @@ body {
     min-height: 100vh;
 }
 
+/* Site Header */
+.site-header {
+    height: 80px;
+    min-height: 80px;
+    padding: 16px 32px;
+    background: white;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.epic-logo {
+    height: 41px;
+    width: auto;
+}
+
 /* Split-screen Layout */
 .demo-container {
     display: grid;
     grid-template-columns: 320px 1fr;
-    min-height: 100vh;
+    min-height: calc(100vh - 80px);
 }
 
 /* Control Panel (Left) */
@@ -55,7 +71,7 @@ body {
     border-right: 1px solid var(--border);
     padding: var(--spacing-lg);
     overflow-y: auto;
-    max-height: 100vh;
+    max-height: calc(100vh - 80px);
 }
 
 .panel-header {
