@@ -10,7 +10,6 @@
 
 - [STATUS.md](docs/lottie-compat/STATUS.md) - Current progress (read first!)
 - [README.md](docs/lottie-compat/README.md) - Project overview & background docs
-- [phases/](docs/lottie-compat/phases/) - Detailed phase instructions
 
 **Goal:** Compatibility layer so Rive receives data in Epic's Lottie format. Enables A/B testing without changing Epic's data layer.
 
