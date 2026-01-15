@@ -4,6 +4,7 @@
 let isExpanded = false;
 let controlPanel = null;
 let sheetHandle = null;
+let mobileFab = null;
 
 const MOBILE_BREAKPOINT = 900;
 
@@ -22,6 +23,7 @@ function toggleSheet() {
 
     isExpanded = !isExpanded;
     controlPanel.classList.toggle('sheet-expanded', isExpanded);
+    mobileFab?.classList.toggle('fab-active', isExpanded);
 }
 
 /**
@@ -32,6 +34,7 @@ export function collapseSheet() {
 
     isExpanded = false;
     controlPanel.classList.remove('sheet-expanded');
+    mobileFab?.classList.remove('fab-active');
 }
 
 /**
@@ -42,6 +45,7 @@ export function expandSheet() {
 
     isExpanded = true;
     controlPanel.classList.add('sheet-expanded');
+    mobileFab?.classList.add('fab-active');
 }
 
 /**
@@ -107,14 +111,22 @@ function setupAutoCollapse() {
 export function initBottomSheet() {
     controlPanel = document.querySelector('.control-panel');
     sheetHandle = document.getElementById('sheetHandle');
+    mobileFab = document.getElementById('mobileFab');
 
-    if (!controlPanel || !sheetHandle) {
-        console.warn('[BottomSheet] Required elements not found');
+    if (!controlPanel) {
+        console.warn('[BottomSheet] Control panel not found');
         return;
     }
 
-    // Handle click toggles sheet
-    sheetHandle.addEventListener('click', toggleSheet);
+    // Handle click toggles sheet (keep as backup)
+    if (sheetHandle) {
+        sheetHandle.addEventListener('click', toggleSheet);
+    }
+
+    // FAB click toggles sheet
+    if (mobileFab) {
+        mobileFab.addEventListener('click', toggleSheet);
+    }
 
     // Clear state on resize to desktop
     window.addEventListener('resize', handleResize);
