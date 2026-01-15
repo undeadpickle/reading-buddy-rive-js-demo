@@ -7,6 +7,7 @@ import { initRive, handleResize, cleanup } from './rive-controller.js';
 import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay, populateDialoguePresets, updateSceneSelectorDisplay } from './ui-controls.js';
 import { initGamificationUI } from './gamification-ui.js';
 import { initSceneController, onSceneChange } from './scene-controller.js';
+import { initBottomSheet } from './bottom-sheet.js';
 import { log } from './logger.js';
 import * as dataAdapter from './data-adapter.js';
 
@@ -93,6 +94,7 @@ async function init() {
         // Phase 2: Initialize UI controls
         initControls();
         initGamificationUI();
+        initBottomSheet();
 
         // Initialize scene controller and register callbacks
         await initSceneController(CONFIG.DEFAULT_SCENE);

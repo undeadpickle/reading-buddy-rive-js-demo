@@ -32,6 +32,10 @@
 
     --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     --font-mono: 'SF Mono', Monaco, 'Consolas', monospace;
+
+    /* Bottom sheet (mobile) */
+    --radius-lg: 16px;
+    --sheet-handle-height: 56px;
 }
 
 body {
@@ -627,22 +631,37 @@ body {
     background: var(--canvas-bg);
 }
 
+/* Bottom Sheet Handle (hidden on desktop) */
+.sheet-handle {
+    display: none;
+}
+
 /* Mobile Responsive */
 @media (max-width: 900px) {
+    /* Canvas fills viewport */
     .demo-container {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: 1fr;
+        height: calc(100vh - 80px);
+        overflow: hidden;
     }
 
     .preview-panel {
-        order: -1;
+        order: 0;
         padding: var(--spacing);
+        padding-bottom: calc(var(--sheet-handle-height) + var(--spacing));
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
     }
 
     .canvas-wrapper {
         width: 100%;
-        max-width: 500px;
+        max-width: min(100vw - 32px, 500px);
         height: auto;
+        max-height: calc(100vh - 80px - var(--sheet-handle-height) - 80px);
         aspect-ratio: 1;
     }
 
@@ -651,11 +670,79 @@ body {
         max-width: 500px;
     }
 
+    /* Bottom Sheet */
     .control-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-height: 60vh;
         border-right: none;
         border-top: 1px solid var(--border);
-        max-height: none;
-        padding: var(--spacing);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        box-shadow: 0 -4px 20px var(--shadow);
+        transform: translateY(calc(100% - var(--sheet-handle-height)));
+        transition: transform 0.3s ease-out;
+        z-index: 50;
+        padding: 0 var(--spacing) var(--spacing);
+        overflow-y: auto;
+    }
+
+    .control-panel.sheet-expanded {
+        transform: translateY(0);
+    }
+
+    /* Sheet Handle */
+    .sheet-handle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--sheet-handle-height);
+        cursor: pointer;
+        position: sticky;
+        top: 0;
+        background: var(--panel-bg);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        z-index: 1;
+        margin: 0 calc(-1 * var(--spacing));
+        padding: 0 var(--spacing);
+    }
+
+    .sheet-handle::before {
+        content: '';
+        width: 40px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+    }
+
+    .sheet-handle-text {
+        position: absolute;
+        left: var(--spacing);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .sheet-handle-icon {
+        position: absolute;
+        right: var(--spacing);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        transition: transform 0.3s ease;
+    }
+
+    .control-panel.sheet-expanded .sheet-handle-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Hide redundant elements on mobile */
+    .control-panel .panel-header {
+        display: none;
+    }
+
+    .control-panel .debug-section {
+        display: none;
     }
 
     .buddy-grid {
