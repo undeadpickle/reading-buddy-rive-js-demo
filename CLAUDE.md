@@ -42,9 +42,10 @@ No build/bundler/tests - vanilla JS via ES modules.
 
 ### Modules
 
-- **js/config.js** - Central config: Rive path, buddy variants, body parts, state machine inputs, animation mappings
+- **js/config.js** - Central config: Rive path, buddy variants, body parts, state machine inputs, animation mappings, scene definitions
 - **js/asset-loader.js** - OOB asset preloading, image caching, Rive assetLoader callback
-- **js/rive-controller.js** - Rive lifecycle, state machine inputs, buddy switching
+- **js/rive-controller.js** - Rive lifecycle, state machine inputs, buddy switching, scene reset
+- **js/scene-controller.js** - Multi-artboard scene switching, overlay management
 - **js/data-adapter.js** - Epic API → Rive transformer
 - **js/ui-controls.js** - DOM handlers, buddy selector, animation buttons
 - **js/gamification-ui.js** - Star counter UI
@@ -53,7 +54,9 @@ No build/bundler/tests - vanilla JS via ES modules.
 
 1. Page load → preload buddy PNGs into cache
 2. Init Rive → assetLoader intercepts OOB requests → serves from cache
-3. Buddy switch → cleanup old instance → reinit with new buddy's assets
+3. Scene switch (same canvas) → `reset()` reuses decoded assets (fast)
+4. Scene switch (different canvas/overlay) → full reinit required
+5. Buddy switch → cleanup old instance → reinit with new buddy's assets
 
 ### Asset Structure
 
@@ -98,6 +101,7 @@ assetLoader: async (asset, bytes) => {
 - Artboard set to `null` in constructor to use default (avoids "Invalid artboard name" errors)
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops
 - Use Context7 MCP with `rive-app/rive-docs` for API docs
+- Scene switching uses `riveInstance.reset()` to avoid re-decoding OOB assets (see `resetToScene()` in rive-controller.js)
 
 ## Critical Gotchas
 

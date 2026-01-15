@@ -2,7 +2,7 @@
 // Scene management - switching between artboards and handling overlay mode
 
 import { CONFIG, SCENES } from './config.js';
-import { initRiveWithScene, cleanup as cleanupRive, getCurrentBuddy } from './rive-controller.js';
+import { initRiveWithScene, resetToScene, cleanup as cleanupRive, getCurrentBuddy } from './rive-controller.js';
 import { log } from './logger.js';
 
 // Module state
@@ -68,19 +68,36 @@ export async function switchScene(sceneId) {
     // Update canvas dimensions for the new scene
     updateCanvasDimensions(sceneConfig);
 
-    // Get appropriate canvas based on display mode
-    const canvas = sceneConfig.displayMode === 'overlay'
-        ? document.getElementById('overlayRiveCanvas')
-        : document.getElementById('riveCanvas');
+    // Determine if we can use fast reset (same canvas, no overlay transition)
+    const canUseReset =
+        currentSceneId &&                                    // Not initial load
+        sceneConfig.displayMode !== 'overlay' &&             // Not going TO overlay
+        SCENES[currentSceneId]?.displayMode !== 'overlay';   // Not coming FROM overlay
 
-    if (!canvas) {
-        log(`Canvas not found for scene: ${sceneId}`, 'error');
-        return false;
+    let success = false;
+
+    if (canUseReset) {
+        // Fast path: reset artboard without full reinit (avoids re-decoding OOB assets)
+        log('Using fast reset (same canvas)');
+        success = resetToScene(sceneConfig);
+    } else {
+        // Slow path: full reinit needed (different canvas or initial load)
+        log('Using full reinit (canvas change or initial load)');
+
+        // Get appropriate canvas based on display mode
+        const canvas = sceneConfig.displayMode === 'overlay'
+            ? document.getElementById('overlayRiveCanvas')
+            : document.getElementById('riveCanvas');
+
+        if (!canvas) {
+            log(`Canvas not found for scene: ${sceneId}`, 'error');
+            return false;
+        }
+
+        // Initialize Rive with the new scene's artboard
+        const buddyId = getCurrentBuddy() || CONFIG.DEFAULT_BUDDY;
+        success = await initRiveWithScene(buddyId, canvas, sceneConfig);
     }
-
-    // Initialize Rive with the new scene's artboard
-    const buddyId = getCurrentBuddy() || CONFIG.DEFAULT_BUDDY;
-    const success = await initRiveWithScene(buddyId, canvas, sceneConfig);
 
     if (success) {
         currentSceneId = sceneId;

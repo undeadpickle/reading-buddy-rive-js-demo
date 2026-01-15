@@ -177,6 +177,49 @@ export async function switchBuddy(newBuddyId) {
 }
 
 /**
+ * Reset to a different artboard/scene WITHOUT full reinit
+ * Uses Rive's reset() method to avoid re-decoding OOB assets
+ * Only works for same-canvas switches (not for overlay transitions)
+ * @param {Object} sceneConfig - { artboard, stateMachine, ... }
+ * @returns {boolean} - true if successful
+ */
+export function resetToScene(sceneConfig) {
+    if (!riveInstance || !isRiveLoaded) {
+        log('Cannot reset: no Rive instance', 'warn');
+        return false;
+    }
+
+    const artboardName = sceneConfig.artboard || CONFIG.ARTBOARD;
+    const stateMachineName = sceneConfig.stateMachine || CONFIG.STATE_MACHINE;
+
+    log(`Resetting to artboard=${artboardName}, stateMachine=${stateMachineName}`);
+
+    currentSceneConfig = sceneConfig;
+
+    // Use Rive's reset() - keeps file loaded, just switches artboard
+    riveInstance.reset({
+        artboard: artboardName,
+        stateMachines: stateMachineName,
+        autoplay: true
+    });
+
+    // Re-cache inputs for the new state machine (different artboards have different inputs)
+    stateMachineInputs = {};
+    if (stateMachineName) {
+        cacheStateMachineInputs(stateMachineName);
+    }
+
+    // Re-cache View Model instance
+    cacheViewModelInstance();
+
+    // Resize drawing surface for new artboard dimensions
+    riveInstance.resizeDrawingSurfaceToCanvas();
+
+    log(`Reset to scene: ${sceneConfig.name || artboardName}`);
+    return true;
+}
+
+/**
  * Cache references to state machine inputs for quick access
  * @param {string} stateMachineName - Name of the state machine
  */

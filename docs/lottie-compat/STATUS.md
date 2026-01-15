@@ -32,6 +32,7 @@ Key implementation details:
 - Cache busting via `RIVE_FILE_VERSION` in config.js prevents stale .riv issues
 - Scene controller manages canvas vs overlay display modes
 - Control panel visibility toggles per scene configuration
+- **Performance optimization**: Same-canvas scene switches use `riveInstance.reset()` to avoid re-decoding OOB assets. Full reinit only occurs for overlay transitions or buddy changes.
 
 ### Phase 5 (PENDING)
 
@@ -58,8 +59,8 @@ ff7aa76 Phase 3B: Wire dialogue system to data adapter
 - `js/gamification-ui.js` - Star counter state and animations (NEW, Phase 2B), wired to data adapter (Phase 3A)
 - `js/ui-controls.js` - Added `populateDialoguePresets()` (Phase 3B), canvas click handler (Phase 3C), scene selector
 - `js/main.js` - Added data adapter + gamification UI imports, scene controller init
-- `js/scene-controller.js` - Scene switching logic, overlay management (NEW)
-- `js/rive-controller.js` - Added `initRiveWithScene()` for multi-artboard support, cache busting
+- `js/scene-controller.js` - Scene switching logic, overlay management, fast reset detection (NEW)
+- `js/rive-controller.js` - Added `initRiveWithScene()` for multi-artboard support, `resetToScene()` for fast artboard switching, cache busting
 - `index.html` - Added star-progress UI (2A) + gamification controls (2B) + scene selector + overlay
 - `css/styles.css` - Added star styles (Phase 2A) + scene/overlay styles
 
