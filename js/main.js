@@ -1,11 +1,12 @@
 // js/main.js
 // Entry point - initialization and FPS counter
 
-import { CONFIG } from './config.js';
+import { CONFIG, SCENES } from './config.js';
 import { preloadAllBuddies } from './asset-loader.js';
 import { initRive, handleResize, cleanup } from './rive-controller.js';
-import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay, populateDialoguePresets } from './ui-controls.js';
+import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay, populateDialoguePresets, updateSceneSelectorDisplay } from './ui-controls.js';
 import { initGamificationUI } from './gamification-ui.js';
+import { initSceneController, onSceneChange } from './scene-controller.js';
 import { log } from './logger.js';
 import * as dataAdapter from './data-adapter.js';
 
@@ -93,10 +94,17 @@ async function init() {
         initControls();
         initGamificationUI();
 
+        // Initialize scene controller and register callbacks
+        await initSceneController(CONFIG.DEFAULT_SCENE);
+        onSceneChange((newSceneId, oldSceneId) => {
+            log(`Scene changed: ${oldSceneId} -> ${newSceneId}`);
+            updateSceneSelectorDisplay(newSceneId);
+        });
+
         // Wait for preload to complete
         await preloadPromise;
 
-        // Phase 3: Initialize Rive with default buddy
+        // Phase 3: Initialize Rive with default buddy and scene
         const canvas = document.getElementById('riveCanvas');
         if (!canvas) {
             log('Canvas element not found', 'error');
@@ -104,6 +112,8 @@ async function init() {
             return;
         }
 
+        // Get default scene config
+        const defaultScene = SCENES[CONFIG.DEFAULT_SCENE];
         const riveSuccess = await initRive(CONFIG.DEFAULT_BUDDY, canvas);
 
         if (!riveSuccess) {
@@ -114,6 +124,7 @@ async function init() {
         }
 
         updateCurrentBuddyDisplay(CONFIG.DEFAULT_BUDDY);
+        updateSceneSelectorDisplay(CONFIG.DEFAULT_SCENE);
 
         // Load buddy data from mock API and populate dialogue presets
         await dataAdapter.loadBuddyData();

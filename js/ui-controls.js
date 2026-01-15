@@ -1,8 +1,9 @@
 // js/ui-controls.js
 // UI event handlers and control panel setup
 
-import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS } from './config.js';
+import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS, SCENES } from './config.js';
 import { switchBuddy, fireTrigger, setBoolean, getBoolean, setNumber, getCurrentBuddy, setDialogueText, setOnBubbleClick } from './rive-controller.js';
+import { switchScene, getCurrentScene, closeOverlay } from './scene-controller.js';
 import { log } from './logger.js';
 import { getAllDialogues, getDialogue, playSegment } from './data-adapter.js';
 
@@ -10,6 +11,7 @@ import { getAllDialogues, getDialogue, playSegment } from './data-adapter.js';
  * Initialize all UI controls
  */
 export function initControls() {
+    initSceneSelector();
     initBuddySelector();
     initDialogueInput();
     initAnimationTriggers();
@@ -19,6 +21,48 @@ export function initControls() {
     initCanvasClickHandler();
 
     log('UI controls initialized');
+}
+
+/**
+ * Set up scene selector dropdown
+ */
+function initSceneSelector() {
+    const selector = document.getElementById('sceneSelector');
+    if (!selector) return;
+
+    selector.addEventListener('change', async () => {
+        const sceneId = selector.value;
+        if (!sceneId) return;
+
+        log(`Scene selector changed: ${sceneId}`);
+
+        // Show loading
+        showLoading(true);
+
+        // Switch scene
+        const success = await switchScene(sceneId);
+
+        showLoading(false);
+
+        if (!success) {
+            // Revert selector to current scene on failure
+            const current = getCurrentScene();
+            if (current) {
+                selector.value = current;
+            }
+        }
+    });
+}
+
+/**
+ * Update scene selector UI to match current scene
+ * @param {string} sceneId
+ */
+export function updateSceneSelectorDisplay(sceneId) {
+    const selector = document.getElementById('sceneSelector');
+    if (selector && sceneId) {
+        selector.value = sceneId;
+    }
 }
 
 /**

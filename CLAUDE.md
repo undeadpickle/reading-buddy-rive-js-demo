@@ -104,8 +104,11 @@ assetLoader: async (asset, bytes) => {
 ### Export vs Save
 **Save** = Rive cloud only. **Export** = writes .riv to disk. Always export after changes.
 
+### Artboards Must Be Components
+Only artboards marked as **components** are included in .riv export. Select artboard → `Shift+N` to toggle. Symptom: "Invalid artboard name" error when switching scenes.
+
 ### Browser Cache
-Symptoms: old .riv, stale assets, animations not firing. Fix: `Cmd+Shift+R` or incognito.
+Symptoms: old .riv, stale assets, animations not firing. Fix: bump `RIVE_FILE_VERSION` in config.js, or `Cmd+Shift+R`.
 
 ## MCP Troubleshooting
 

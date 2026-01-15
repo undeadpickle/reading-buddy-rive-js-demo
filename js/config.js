@@ -3,11 +3,44 @@
 
 export const CONFIG = {
     RIVE_FILE: './public/rive/reading-buddy.riv',
+    RIVE_FILE_VERSION: 2,  // Bump this after re-exporting .riv to bust cache
     ASSETS_BASE: './public/reading-buddies',
     CANVAS_SIZE: 500,
     STATE_MACHINE: 'BuddyStateMachine',  // State machine name in .riv
     ARTBOARD: 'Reading Buddy',  // Explicit artboard name (required for View Model binding)
     DEFAULT_BUDDY: 'catdog-orange',
+    DEFAULT_SCENE: 'reading-buddy',
+};
+
+// Scene configurations for different artboards
+export const SCENES = {
+    'reading-buddy': {
+        name: 'Reading Buddy',
+        artboard: 'Reading Buddy',
+        stateMachine: 'BuddyStateMachine',
+        width: 500,
+        height: 500,
+        displayMode: 'canvas',  // Normal canvas display
+        controls: ['buddySelector', 'dialogue', 'animations', 'states', 'events', 'gamification'],
+    },
+    'adventure-page': {
+        name: 'Adventure Page',
+        artboard: 'Adventure Page',
+        stateMachine: 'State Machine 1',
+        width: 500,
+        height: 680,
+        displayMode: 'canvas',  // Taller canvas
+        controls: ['buddySelector', 'dialogue'],  // Limited controls for this scene
+    },
+    'star-rewards': {
+        name: 'Star Rewards',
+        artboard: 'Star Rewards',
+        stateMachine: 'State Machine 1',
+        width: 1920,
+        height: 1080,
+        displayMode: 'overlay',  // Full-screen overlay mode
+        controls: ['starRewards'],  // Scene-specific controls
+    },
 };
 
 // All available buddy variants

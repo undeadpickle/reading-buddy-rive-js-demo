@@ -13,13 +13,31 @@ let isRiveLoaded = false;
 let viewModelInstance = null;
 let onBubbleClickCallback = null;
 
+// Current scene config (for state machine name reference)
+let currentSceneConfig = null;
+
 /**
- * Initialize Rive with a specific buddy
+ * Initialize Rive with a specific buddy (uses default CONFIG artboard/state machine)
  * @param {string} buddyId - e.g., 'catdog-orange'
  * @param {HTMLCanvasElement} canvas
  * @returns {Promise<boolean>} - true if successful
  */
 export async function initRive(buddyId, canvas) {
+    // Use default config
+    return initRiveWithScene(buddyId, canvas, {
+        artboard: CONFIG.ARTBOARD,
+        stateMachine: CONFIG.STATE_MACHINE,
+    });
+}
+
+/**
+ * Initialize Rive with a specific buddy and scene configuration
+ * @param {string} buddyId - e.g., 'catdog-orange'
+ * @param {HTMLCanvasElement} canvas
+ * @param {Object} sceneConfig - { artboard, stateMachine, width, height, ... }
+ * @returns {Promise<boolean>} - true if successful
+ */
+export async function initRiveWithScene(buddyId, canvas, sceneConfig) {
     // Clean up existing instance
     if (riveInstance) {
         log('Cleaning up previous Rive instance');
@@ -30,11 +48,15 @@ export async function initRive(buddyId, canvas) {
     }
 
     currentBuddyId = buddyId;
+    currentSceneConfig = sceneConfig;
 
     // Ensure assets are preloaded
     await preloadBuddyAssets(buddyId);
 
-    log(`Initializing Rive with ${buddyId}...`);
+    const artboardName = sceneConfig.artboard || CONFIG.ARTBOARD;
+    const stateMachineName = sceneConfig.stateMachine || CONFIG.STATE_MACHINE;
+
+    log(`Initializing Rive: buddy=${buddyId}, artboard=${artboardName}, stateMachine=${stateMachineName}`);
 
     return new Promise((resolve) => {
         try {
@@ -47,9 +69,13 @@ export async function initRive(buddyId, canvas) {
                 return;
             }
 
-            // Build Rive options - only include artboard/stateMachines if specified
+            // Build Rive options with cache busting
+            const riveFileSrc = CONFIG.RIVE_FILE_VERSION
+                ? `${CONFIG.RIVE_FILE}?v=${CONFIG.RIVE_FILE_VERSION}`
+                : CONFIG.RIVE_FILE;
+
             const riveOptions = {
-                src: CONFIG.RIVE_FILE,
+                src: riveFileSrc,
                 canvas: canvas,
                 autoplay: true,
                 autoBind: true,  // Enable View Model data binding
@@ -62,10 +88,10 @@ export async function initRive(buddyId, canvas) {
                     isRiveLoaded = true;
 
                     // Only cache inputs if a state machine is configured
-                    if (CONFIG.STATE_MACHINE) {
-                        cacheStateMachineInputs();
+                    if (stateMachineName) {
+                        cacheStateMachineInputs(stateMachineName);
                     } else {
-                        log('No state machine configured (animations/states not yet added to .riv)');
+                        log('No state machine configured');
                     }
 
                     // Get View Model instance for data binding
@@ -105,12 +131,13 @@ export async function initRive(buddyId, canvas) {
                 },
             };
 
-            // Only add artboard/stateMachines if configured
-            if (CONFIG.ARTBOARD) {
-                riveOptions.artboard = CONFIG.ARTBOARD;
+            // Add artboard if specified
+            if (artboardName) {
+                riveOptions.artboard = artboardName;
             }
-            if (CONFIG.STATE_MACHINE) {
-                riveOptions.stateMachines = CONFIG.STATE_MACHINE;
+            // Add state machine if specified
+            if (stateMachineName) {
+                riveOptions.stateMachines = stateMachineName;
             }
 
             riveInstance = new riveRuntime.Rive(riveOptions);
@@ -123,6 +150,7 @@ export async function initRive(buddyId, canvas) {
 
 /**
  * Switch to a different buddy variant (hot-swap)
+ * Preserves current scene/artboard
  * @param {string} newBuddyId
  * @returns {Promise<boolean>}
  */
@@ -140,18 +168,23 @@ export async function switchBuddy(newBuddyId) {
         return false;
     }
 
-    // Reinitialize with new buddy
-    return await initRive(newBuddyId, canvas);
+    // Reinitialize with new buddy, keeping current scene config
+    if (currentSceneConfig) {
+        return await initRiveWithScene(newBuddyId, canvas, currentSceneConfig);
+    } else {
+        return await initRive(newBuddyId, canvas);
+    }
 }
 
 /**
  * Cache references to state machine inputs for quick access
+ * @param {string} stateMachineName - Name of the state machine
  */
-function cacheStateMachineInputs() {
+function cacheStateMachineInputs(stateMachineName) {
     if (!riveInstance) return;
 
     try {
-        const inputs = riveInstance.stateMachineInputs(CONFIG.STATE_MACHINE);
+        const inputs = riveInstance.stateMachineInputs(stateMachineName);
         stateMachineInputs = {};
 
         if (inputs) {

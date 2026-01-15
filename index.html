@@ -16,8 +16,18 @@
                 <p class="subtitle">Rive Animation + OOB Assets</p>
             </header>
 
+            <!-- Scene Selection -->
+            <section class="control-section" id="sceneSection">
+                <h2>Scene</h2>
+                <select id="sceneSelector" class="scene-selector">
+                    <option value="reading-buddy">Reading Buddy (Default)</option>
+                    <option value="adventure-page">Adventure Page</option>
+                    <option value="star-rewards">Star Rewards</option>
+                </select>
+            </section>
+
             <!-- Buddy Selection -->
-            <section class="control-section">
+            <section class="control-section" id="buddySelectorSection">
                 <h2>Select Buddy</h2>
                 <div class="buddy-grid" id="buddySelector">
                     <!-- Dynamically populated -->
@@ -25,7 +35,7 @@
             </section>
 
             <!-- Dialogue Text -->
-            <section class="control-section">
+            <section class="control-section" id="dialogueSection">
                 <h2>Dialogue Text</h2>
                 <div class="text-input-group">
                     <input type="text" id="dialogueInput" placeholder="Enter dialogue..." maxlength="100">
@@ -42,7 +52,7 @@
             </section>
 
             <!-- Animation Triggers -->
-            <section class="control-section">
+            <section class="control-section" id="animationsSection">
                 <h2>Animations</h2>
                 <div class="button-group" id="animationTriggers">
                     <!-- Dynamically populated -->
@@ -69,7 +79,7 @@
             </section>
 
             <!-- Event Simulators -->
-            <section class="control-section">
+            <section class="control-section" id="eventsSection">
                 <h2>Simulate Events</h2>
                 <div class="button-group" id="eventSimulators">
                     <!-- Dynamically populated -->
@@ -77,12 +87,22 @@
             </section>
 
             <!-- Gamification Controls -->
-            <section class="control-section">
+            <section class="control-section" id="gamificationSection">
                 <h2>Gamification</h2>
                 <div class="button-group">
                     <button class="trigger-btn" id="earnStar">Earn Star</button>
                     <button class="trigger-btn" id="resetStars">Reset</button>
                 </div>
+            </section>
+
+            <!-- Star Rewards Controls (overlay scene only) -->
+            <section class="control-section scene-hidden" id="starRewardsSection">
+                <h2>Star Rewards</h2>
+                <div class="button-group">
+                    <button class="trigger-btn" id="triggerChest" disabled>Open Chest</button>
+                    <button class="trigger-btn" id="awardStars" disabled>Award Stars</button>
+                </div>
+                <p class="control-hint">State machine controls coming soon</p>
             </section>
 
             <!-- Debug Log -->
@@ -101,7 +121,7 @@
                 <span class="star" data-star="3"></span>
             </div>
 
-            <div class="canvas-wrapper">
+            <div class="canvas-wrapper" id="canvasWrapper">
                 <!-- Loading Overlay -->
                 <div class="loading-overlay" id="loadingOverlay">
                     <div class="spinner"></div>
@@ -126,6 +146,15 @@
                 <span id="fpsCounter">-- FPS</span>
             </footer>
         </main>
+
+        <!-- Scene Overlay (Star Rewards) -->
+        <div class="scene-overlay" id="sceneOverlay">
+            <div class="overlay-backdrop"></div>
+            <div class="overlay-content">
+                <button class="overlay-close-btn" id="overlayCloseBtn" aria-label="Close overlay">&times;</button>
+                <canvas id="overlayRiveCanvas" width="1920" height="1080"></canvas>
+            </div>
+        </div>
     </div>
 
     <!-- Rive Runtime (CDN) -->

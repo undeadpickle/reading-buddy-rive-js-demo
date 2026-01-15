@@ -53,6 +53,7 @@ Epic uses `playSegments([startFrame, endFrame])` with named markers. We map mark
 ## Navigation
 
 - **Current status:** [STATUS.md](./STATUS.md)
+- **Scene architecture:** [rive-scene-architecture.md](./rive-scene-architecture.md) - Multi-scene setup with nested components
 - **Phase details:** [phases/](./phases/)
 - **API reference:** [reference/](./reference/)
 - **Terminology:** [reference/terminology.md](./reference/terminology.md)

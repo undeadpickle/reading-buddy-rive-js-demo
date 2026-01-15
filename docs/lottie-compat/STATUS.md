@@ -1,6 +1,6 @@
 # Current Status
 
-**Last Updated:** Phase 5 added
+**Last Updated:** Scene switching implemented
 
 ## Progress
 
@@ -16,8 +16,24 @@
 - [ ] Phase 5A: Add trig_giggle animation (Rive)
 - [ ] Phase 5B: Add trig_celebrate animation (Rive)
 - [ ] Phase 5C: Update JS config
+- [x] Scene Switching: Multi-artboard support
 
 ## Status: IN PROGRESS
+
+### Scene Switching (COMPLETE)
+
+Added multi-artboard scene switching with three scenes:
+- **Reading Buddy** (default): Standard buddy view with all controls
+- **Adventure Page**: Taller layout with buddy + speech bubble
+- **Star Rewards**: Full-screen overlay with treasure chest animation
+
+Key implementation details:
+- Artboards must be marked as "components" (Shift+N) in Rive Editor to export
+- Cache busting via `RIVE_FILE_VERSION` in config.js prevents stale .riv issues
+- Scene controller manages canvas vs overlay display modes
+- Control panel visibility toggles per scene configuration
+
+### Phase 5 (PENDING)
 
 Phase 5 adds distinct animations for tap response (`trig_giggle`) and star celebration (`trig_celebrate`).
 
@@ -37,13 +53,15 @@ ff7aa76 Phase 3B: Wire dialogue system to data adapter
 
 - `public/api/buddy.json` - Mock getBuddy response (Epic exact structure)
 - `public/api/daily-tasks.json` - Mock getTasksForToday response
-- `js/config.js` - Added ANIMATION_MAPPING and DIALOGUE_CONTEXTS exports
+- `js/config.js` - Added ANIMATION_MAPPING, DIALOGUE_CONTEXTS, SCENES, RIVE_FILE_VERSION
 - `js/data-adapter.js` - Epic API → Rive compatibility layer, added `getAllDialogues()` (Phase 3B)
 - `js/gamification-ui.js` - Star counter state and animations (NEW, Phase 2B), wired to data adapter (Phase 3A)
-- `js/ui-controls.js` - Added `populateDialoguePresets()` (Phase 3B), canvas click handler (Phase 3C)
-- `js/main.js` - Added data adapter + gamification UI imports, calls `populateDialoguePresets()` (Phase 3B)
-- `index.html` - Added star-progress UI (2A) + gamification controls (2B)
-- `css/styles.css` - Added star styles (Phase 2A)
+- `js/ui-controls.js` - Added `populateDialoguePresets()` (Phase 3B), canvas click handler (Phase 3C), scene selector
+- `js/main.js` - Added data adapter + gamification UI imports, scene controller init
+- `js/scene-controller.js` - Scene switching logic, overlay management (NEW)
+- `js/rive-controller.js` - Added `initRiveWithScene()` for multi-artboard support, cache busting
+- `index.html` - Added star-progress UI (2A) + gamification controls (2B) + scene selector + overlay
+- `css/styles.css` - Added star styles (Phase 2A) + scene/overlay styles
 
 ## Rollback Point
 
