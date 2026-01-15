@@ -1,25 +1,10 @@
 # CLAUDE.md
 
-## Active Project: Epic Lottie → Rive Compatibility Layer
-
-**Branch:** `feature/epic-lottie-compat`
-
-**IMPORTANT:** Read `docs/lottie-compat/STATUS.md` at session start for current progress.
-
-**Quick Links:**
-
-- [STATUS.md](docs/lottie-compat/STATUS.md) - Current progress (read first!)
-- [README.md](docs/lottie-compat/README.md) - Project overview & background docs
-
-**Goal:** Compatibility layer so Rive receives data in Epic's Lottie format. Enables A/B testing without changing Epic's data layer.
-
-**Collaboration:** Check with user before non-obvious decisions. Commit only after verification. Update STATUS.md after each phase.
-
----
-
 ## Project Overview
 
-Vanilla JS demo using Rive animations with OOB (out-of-band) asset swapping. Animated "reading buddy" characters with 11 variants and dynamic PNG body part swapping.
+Rive animation sandbox for Epic's reading buddy characters. 11 buddy variants with dynamic PNG body part swapping via OOB (out-of-band) assets.
+
+**Docs:** [STATUS.md](docs/STATUS.md) tracks remaining work. Reference docs in `docs/reference/`.
 
 ## Commands
 
@@ -30,12 +15,6 @@ lsof -ti:8080 | xargs kill -9   # Kill stale server
 ```
 
 No build/bundler/tests - vanilla JS via ES modules.
-
-## Git
-
-**Repo:** https://github.com/undeadpickle/reading-buddy-rive-js-demo
-
-`.mcp.json` is gitignored (local MCP config).
 
 ## Architecture
 
@@ -69,8 +48,6 @@ Body parts (must match Rive Editor names exactly): head, headBack, torso, armLef
 
 ### OOB Asset Pattern (Critical)
 
-This is the core pattern for dynamic asset swapping:
-
 ```javascript
 assetLoader: async (asset, bytes) => {
   // Fonts: must explicitly decode even when embedded
@@ -100,7 +77,7 @@ assetLoader: async (asset, bytes) => {
 - Artboard set to `null` in constructor to use default (avoids "Invalid artboard name" errors)
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops
 - Use Context7 MCP with `rive-app/rive-docs` for API docs
-- Scene switching uses `riveInstance.reset()` to avoid re-decoding OOB assets (see `resetToScene()` in rive-controller.js)
+- Scene switching uses `riveInstance.reset()` to avoid re-decoding OOB assets
 
 ## Critical Gotchas
 
