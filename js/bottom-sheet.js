@@ -24,6 +24,11 @@ function toggleSheet() {
     isExpanded = !isExpanded;
     controlPanel.classList.toggle('sheet-expanded', isExpanded);
     mobileFab?.classList.toggle('fab-active', isExpanded);
+
+    // Scroll to top when collapsing
+    if (!isExpanded) {
+        controlPanel.scrollTop = 0;
+    }
 }
 
 /**
@@ -35,6 +40,7 @@ export function collapseSheet() {
     isExpanded = false;
     controlPanel.classList.remove('sheet-expanded');
     mobileFab?.classList.remove('fab-active');
+    controlPanel.scrollTop = 0;
 }
 
 /**
