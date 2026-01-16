@@ -36,6 +36,23 @@ local GUST_DECAY = 0.94
 local GUST_MIN_STRENGTH = 40
 local GUST_MAX_STRENGTH = 80
 
+-- Pointer interaction
+local POINTER_VEL_SMOOTHING = 0.7
+local POINTER_VEL_DELTA_WEIGHT = 0.3
+local POINTER_VEL_FRAME_SCALE = 60
+local POINTER_SPEED_NORMALIZATION = 500
+
+-- Snow accumulation distribution
+local ACCUMULATION_CENTER_WEIGHT = 0.6
+local ACCUMULATION_NEIGHBOR_WEIGHT = 0.2
+
+-- Bounds buffer (pixels beyond canvas before removal)
+local BOUNDS_BUFFER_Y = 50
+local BOUNDS_BUFFER_X = 100
+
+-- Bezier curve smoothing
+local BEZIER_HANDLE_FACTOR = 0.35
+
 -- Cool blue colors for snowflakes
 local COLORS: { Color } = {
   Color.rgba(173, 216, 230, 255),
@@ -464,9 +481,9 @@ end
 -- ============================================================
 -- OPTIMIZATION #2: Build snow floor path (called only when dirty)
 -- ============================================================
-local function buildSnowFloorPath(self: SnowflakeParticles): Path
-  local canvasHeight = self.canvasSize.y
-  local canvasWidth = self.canvasSize.x
+local function buildSnowFloorPath(self: SnowflakeParticles, effectiveWidth: number, effectiveHeight: number): Path
+  local canvasHeight = effectiveHeight
+  local canvasWidth = effectiveWidth
   local segments = self.accumulationSegments
   local segmentWidth = self.segmentWidth
 
@@ -505,7 +522,7 @@ local function buildSnowFloorPath(self: SnowflakeParticles): Path
     local slope1 = (h2 - h0) / (2 * segmentWidth)
     local slope2 = (h3 - h1) / (2 * segmentWidth)
 
-    local handleLen = segmentWidth * 0.35
+    local handleLen = segmentWidth * BEZIER_HANDLE_FACTOR
 
     local cp1x = x1 + handleLen
     local cp1y = y1 - slope1 * handleLen
@@ -528,7 +545,7 @@ local function buildSnowFloorPath(self: SnowflakeParticles): Path
   local hPrev = getSmoothedHeight(self, math.max(1, segments - 1))
   local lastSlope = (lastHeight - hPrev) / segmentWidth
 
-  local handleLen = segmentWidth * 0.35
+  local handleLen = segmentWidth * BEZIER_HANDLE_FACTOR
   local exitCp1x = lastX + handleLen
   local exitCp1y = lastY - lastSlope * handleLen
 
@@ -651,9 +668,9 @@ local function advance(self: SnowflakeParticles, seconds: number): boolean
 
     local isInBounds = p.x >= 0 and p.x <= canvasWidth
     local removeByAccum = p.y >= groundY and isInBounds
-    local removeByPos = p.y > canvasHeight + 50
-      or p.x < -100
-      or p.x > canvasWidth + 100
+    local removeByPos = p.y > canvasHeight + BOUNDS_BUFFER_Y
+      or p.x < -BOUNDS_BUFFER_X
+      or p.x > canvasWidth + BOUNDS_BUFFER_X
     local removeByLife = p.age >= p.lifespan
 
     if removeByAccum then
@@ -661,18 +678,18 @@ local function advance(self: SnowflakeParticles, seconds: number): boolean
       if currentSnowHeight < maxSnowHeightPx then
         local addAmount = accumulationRate
         self.snowHeights[segmentIndex] = math.min(
-          (self.snowHeights[segmentIndex] or 0) + addAmount * 0.6,
+          (self.snowHeights[segmentIndex] or 0) + addAmount * ACCUMULATION_CENTER_WEIGHT,
           maxSnowHeightPx
         )
         if segmentIndex > 1 then
           self.snowHeights[segmentIndex - 1] = math.min(
-            (self.snowHeights[segmentIndex - 1] or 0) + addAmount * 0.2,
+            (self.snowHeights[segmentIndex - 1] or 0) + addAmount * ACCUMULATION_NEIGHBOR_WEIGHT,
             maxSnowHeightPx
           )
         end
         if segmentIndex < self.accumulationSegments then
           self.snowHeights[segmentIndex + 1] = math.min(
-            (self.snowHeights[segmentIndex + 1] or 0) + addAmount * 0.2,
+            (self.snowHeights[segmentIndex + 1] or 0) + addAmount * ACCUMULATION_NEIGHBOR_WEIGHT,
             maxSnowHeightPx
           )
         end
@@ -716,7 +733,7 @@ local function advance(self: SnowflakeParticles, seconds: number): boolean
           local pointerSpeed =
             math.sqrt(pointerVelX * pointerVelX + pointerVelY * pointerVelY)
           if pointerSpeed > 1 then
-            local pushForce = pushStrength * falloff * (pointerSpeed / 500)
+            local pushForce = pushStrength * falloff * (pointerSpeed / POINTER_SPEED_NORMALIZATION)
             p.vx = p.vx + (pointerVelX / pointerSpeed) * pushForce * seconds
             p.vy = p.vy + (pointerVelY / pointerSpeed) * pushForce * seconds
             p.angularVelocity = p.angularVelocity
@@ -860,7 +877,7 @@ local function draw(self: SnowflakeParticles, renderer: Renderer)
   -- ============================================================
   if #self.snowHeights > 0 then
     if self.snowHeightsDirty then
-      self.snowFloorPath = buildSnowFloorPath(self)
+      self.snowFloorPath = buildSnowFloorPath(self, canvasWidth, canvasHeight)
       self.snowHeightsDirty = false
     end
     renderer:drawPath(self.snowFloorPath, self.snowPaint)
@@ -931,7 +948,7 @@ local function draw(self: SnowflakeParticles, renderer: Renderer)
       local slope1 = (h2 - h0) / (2 * segmentWidth)
       local slope2 = (h3 - h1) / (2 * segmentWidth)
 
-      local handleLen = segmentWidth * 0.35
+      local handleLen = segmentWidth * BEZIER_HANDLE_FACTOR
 
       local cp1x = x1 + handleLen
       local cp1y = y1 - slope1 * handleLen
@@ -979,7 +996,7 @@ local function handlePointerMove(self: SnowflakeParticles, event: PointerEvent)
   local newPos = event.position
   if self.lastPointerPos then
     local delta = newPos - self.lastPointerPos
-    self.pointerVel = self.pointerVel * 0.7 + delta * 60 * 0.3
+    self.pointerVel = self.pointerVel * POINTER_VEL_SMOOTHING + delta * POINTER_VEL_FRAME_SCALE * POINTER_VEL_DELTA_WEIGHT
   end
   self.pointerPos = newPos
   self.lastPointerPos = newPos
