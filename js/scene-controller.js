@@ -157,9 +157,10 @@ function updateCanvasDimensions(sceneConfig) {
     if (sceneConfig.displayMode === 'overlay') {
         // For overlay, set the overlay canvas dimensions
         if (overlayCanvas) {
-            // Scale to fit while maintaining aspect ratio
-            const maxWidth = window.innerWidth - 320 - 80;  // Subtract control panel + padding
-            const maxHeight = window.innerHeight - 80;
+            // Scale to fit full viewport while maintaining aspect ratio
+            const padding = 32;  // Small padding for close button clearance
+            const maxWidth = window.innerWidth - padding;
+            const maxHeight = window.innerHeight - padding;
             const scale = Math.min(maxWidth / sceneConfig.width, maxHeight / sceneConfig.height);
 
             overlayCanvas.width = sceneConfig.width;
@@ -227,6 +228,13 @@ export async function initSceneController(initialSceneId = CONFIG.DEFAULT_SCENE)
     if (closeBtn) {
         closeBtn.addEventListener('click', closeOverlay);
     }
+
+    // Handle window resize - update overlay canvas dimensions
+    window.addEventListener('resize', () => {
+        if (currentSceneId && SCENES[currentSceneId]?.displayMode === 'overlay') {
+            updateCanvasDimensions(SCENES[currentSceneId]);
+        }
+    });
 
     // Initialize with starting scene
     currentSceneId = initialSceneId;

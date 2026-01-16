@@ -4,6 +4,7 @@
 import { CONFIG, BUDDIES, EVENTS, STATE_INPUTS, SCENES } from './config.js';
 import { switchBuddy, fireTrigger, setBoolean, getBoolean, setNumber, getCurrentBuddy, setDialogueText, setOnBubbleClick } from './rive-controller.js';
 import { switchScene, getCurrentScene, closeOverlay } from './scene-controller.js';
+import { collapseSheet } from './bottom-sheet.js';
 import { log } from './logger.js';
 import { getAllDialogues, getDialogue, playSegment } from './data-adapter.js';
 
@@ -35,6 +36,9 @@ function initSceneSelector() {
         if (!sceneId) return;
 
         log(`Scene selector changed: ${sceneId}`);
+
+        // Collapse sheet on mobile so scene is visible
+        collapseSheet();
 
         // Show loading
         showLoading(true);
