@@ -2,6 +2,7 @@
 // Entry point for Snowfall particles demo
 
 import { initHeader } from './header.js';
+import { initBottomSheet } from './bottom-sheet.js';
 import { initSnowfall, cleanup, handleResize } from './snowfall-controller.js';
 import { log } from './logger.js';
 import { waitForRive, debounce } from './utils.js';
@@ -11,6 +12,22 @@ import { waitForRive, debounce } from './utils.js';
  */
 async function init() {
     initHeader();
+
+    // Initialize bottom sheet for mobile (must be after DOM is ready)
+    initBottomSheet({
+        panelSelector: '.snowfall-controls',
+        handleSelector: '#snowfallSheetHandle',
+        fabSelector: '#snowfallFab',
+        autoCollapseRules: [
+            // Collapse after slider adjustment (longer delay for scrubbing)
+            { containerSelector: '#controlsContainer', targetSelector: 'input[type="range"]', delay: 800, event: 'change' },
+            // Collapse after toggle
+            { containerSelector: '#controlsContainer', targetSelector: 'input[type="checkbox"]', delay: 400, event: 'change' },
+            // Collapse after trigger button
+            { containerSelector: '#controlsContainer', targetSelector: '.trigger-btn', delay: 300 },
+        ]
+    });
+
     log('Snowfall Demo initializing...');
 
     const loadingOverlay = document.getElementById('loadingOverlay');

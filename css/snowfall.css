@@ -160,6 +160,11 @@
     color: #00ff00;
 }
 
+/* Sheet handle (hidden on desktop) */
+.snowfall-controls .sheet-handle {
+    display: none;
+}
+
 /* Mobile: bottom sheet style */
 @media (max-width: 900px) {
     .snowfall-controls {
@@ -168,6 +173,42 @@
         left: 0;
         max-width: none;
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        max-height: 60vh;
+        transform: translateY(calc(100% - var(--sheet-handle-height)));
+        transition: transform 0.3s ease-out;
+        z-index: 50;
+        padding: 0 var(--spacing) var(--spacing);
         padding-bottom: calc(var(--spacing) + env(safe-area-inset-bottom, 0));
+        overflow-y: auto;
+    }
+
+    .snowfall-controls.sheet-expanded {
+        transform: translateY(0);
+    }
+
+    /* Sheet handle (visible on mobile) */
+    .snowfall-controls .sheet-handle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--sheet-handle-height);
+        cursor: pointer;
+        background: transparent;
+        margin: 0 calc(-1 * var(--spacing));
+        position: sticky;
+        top: 0;
+    }
+
+    .snowfall-controls .sheet-handle::before {
+        content: '';
+        width: 40px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+    }
+
+    /* Hide header on mobile (handle is sufficient) */
+    .snowfall-controls h2 {
+        display: none;
     }
 }

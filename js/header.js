@@ -3,6 +3,15 @@
 
 import { PROJECTS, getCurrentProjectId } from './projects.js';
 
+// Update dropdown selection on every pageshow (handles bfcache restoration)
+// Registered at module scope so it's always active
+window.addEventListener('pageshow', () => {
+    const select = document.querySelector('.project-selector');
+    if (select) {
+        select.value = getCurrentProjectId();
+    }
+});
+
 /**
  * Initialize the header with project switcher dropdown
  * Call this on every page after DOM ready

@@ -11,6 +11,21 @@ let mobileFab = null;
 const MOBILE_BREAKPOINT = UI_CONSTANTS.MOBILE_BREAKPOINT;
 
 /**
+ * Default configuration for reading buddy page (backward compatible)
+ */
+const DEFAULT_CONFIG = {
+    panelSelector: '.control-panel',
+    handleSelector: '#sheetHandle',
+    fabSelector: '#mobileFab',
+    autoCollapseRules: [
+        { containerSelector: '#buddySelector', targetSelector: '.buddy-thumb', delay: 300 },
+        { containerSelector: '#animationTriggers', targetSelector: '.trigger-btn', delay: 200 },
+        { containerSelector: '#eventSimulators', targetSelector: '.event-btn', delay: 200 },
+        { containerSelector: '#earnStar', targetSelector: null, delay: 200 },
+    ]
+};
+
+/**
  * Check if viewport is mobile width
  */
 function isMobileViewport() {
@@ -63,66 +78,60 @@ function handleResize() {
     if (!isMobileViewport() && isExpanded) {
         isExpanded = false;
         controlPanel?.classList.remove('sheet-expanded');
+        mobileFab?.classList.remove('fab-active');
     }
 }
 
 /**
- * Set up auto-collapse after user interactions
- * Collapses sheet so user can see animation result
+ * Set up auto-collapse based on configuration rules
+ * @param {Array} rules - Auto-collapse rule definitions
  */
-function setupAutoCollapse() {
-    // Collapse after buddy selection
-    const buddySelector = document.getElementById('buddySelector');
-    if (buddySelector) {
-        buddySelector.addEventListener('click', (e) => {
-            if (e.target.closest('.buddy-thumb') && isMobileViewport()) {
-                setTimeout(collapseSheet, 300);
-            }
-        });
-    }
+function setupAutoCollapse(rules) {
+    if (!rules || rules.length === 0) return;
 
-    // Collapse after animation trigger
-    const animTriggers = document.getElementById('animationTriggers');
-    if (animTriggers) {
-        animTriggers.addEventListener('click', (e) => {
-            if (e.target.closest('.trigger-btn') && isMobileViewport()) {
-                setTimeout(collapseSheet, 200);
-            }
-        });
-    }
+    rules.forEach(rule => {
+        const { containerSelector, targetSelector, delay = 200, event = 'click' } = rule;
+        const container = document.querySelector(containerSelector);
 
-    // Collapse after event simulation
-    const eventSimulators = document.getElementById('eventSimulators');
-    if (eventSimulators) {
-        eventSimulators.addEventListener('click', (e) => {
-            if (e.target.closest('.event-btn') && isMobileViewport()) {
-                setTimeout(collapseSheet, 200);
-            }
-        });
-    }
+        if (!container) return;
 
-    // Collapse after gamification button
-    const earnStar = document.getElementById('earnStar');
-    if (earnStar) {
-        earnStar.addEventListener('click', () => {
-            if (isMobileViewport()) {
-                setTimeout(collapseSheet, 200);
+        // Handle direct element clicks (no targetSelector)
+        if (!targetSelector) {
+            container.addEventListener(event, () => {
+                if (isMobileViewport()) {
+                    setTimeout(collapseSheet, delay);
+                }
+            });
+            return;
+        }
+
+        // Event delegation for child elements
+        container.addEventListener(event, (e) => {
+            if (e.target.closest(targetSelector) && isMobileViewport()) {
+                setTimeout(collapseSheet, delay);
             }
         });
-    }
+    });
 }
 
 /**
  * Initialize bottom sheet behavior
  * Only activates on mobile viewport
+ * @param {Object} [config] - Configuration object (uses defaults if not provided)
+ * @param {string} [config.panelSelector] - CSS selector for the control panel
+ * @param {string} [config.handleSelector] - CSS selector for sheet handle
+ * @param {string} [config.fabSelector] - CSS selector for FAB button
+ * @param {Array} [config.autoCollapseRules] - Rules for auto-collapse behavior
  */
-export function initBottomSheet() {
-    controlPanel = document.querySelector('.control-panel');
-    sheetHandle = document.getElementById('sheetHandle');
-    mobileFab = document.getElementById('mobileFab');
+export function initBottomSheet(config = {}) {
+    const mergedConfig = { ...DEFAULT_CONFIG, ...config };
+
+    controlPanel = document.querySelector(mergedConfig.panelSelector);
+    sheetHandle = mergedConfig.handleSelector ? document.querySelector(mergedConfig.handleSelector) : null;
+    mobileFab = mergedConfig.fabSelector ? document.querySelector(mergedConfig.fabSelector) : null;
 
     if (!controlPanel) {
-        console.warn('[BottomSheet] Control panel not found');
+        console.warn(`[BottomSheet] Panel not found: ${mergedConfig.panelSelector}`);
         return;
     }
 
@@ -139,6 +148,6 @@ export function initBottomSheet() {
     // Clear state on resize to desktop
     window.addEventListener('resize', handleResize);
 
-    // Set up auto-collapse for better UX
-    setupAutoCollapse();
+    // Set up auto-collapse rules
+    setupAutoCollapse(mergedConfig.autoCollapseRules);
 }

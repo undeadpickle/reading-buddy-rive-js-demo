@@ -24,8 +24,10 @@
         <!-- Rive Canvas (full viewport) -->
         <canvas id="snowfallCanvas"></canvas>
 
-        <!-- Minimal Controls (floating panel) -->
+        <!-- Minimal Controls (floating panel / bottom sheet on mobile) -->
         <aside class="snowfall-controls" id="snowfallControls">
+            <!-- Bottom Sheet Handle (mobile only, hidden on desktop) -->
+            <div class="sheet-handle" id="snowfallSheetHandle"></div>
             <h2>Snowfall Controls</h2>
             <div id="controlsContainer">
                 <!-- Dynamically populated based on state machine inputs -->
@@ -35,6 +37,11 @@
         <!-- Debug Log (toggle with backtick) -->
         <div class="debug-log hidden" id="debugLog"></div>
     </main>
+
+    <!-- Mobile FAB (floating action button) -->
+    <button class="mobile-fab" id="snowfallFab" aria-label="Toggle controls">
+        <span class="fab-icon">+</span>
+    </button>
 
     <!-- Rive Runtime (WebGL for particle support) -->
     <script src="https://unpkg.com/@rive-app/webgl@2.34.1"></script>
