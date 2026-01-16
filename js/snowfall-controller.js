@@ -1,15 +1,39 @@
 // js/snowfall-controller.js
-// Rive controller for Snowfall particles (simpler than buddy controller - no OOB assets)
+// Rive controller for Snowfall particles - uses ViewModel data binding
 
 import { log } from './logger.js';
 
 const SNOWFALL_CONFIG = {
     riveFile: './public/rive/snow-fall-particles.riv',
-    fileVersion: 1,
+    fileVersion: 4, // Bump for 1920x1080 artboard
 };
 
+// Input configurations with proper ranges (derived from Rive script defaults)
+const INPUT_CONFIG = {
+    // Spawning
+    topFlowRate:          { min: 0,   max: 100,  step: 1,    group: 'Spawning', type: 'number', default: 15 },
+    topVelocity:          { min: 0,   max: 3,    step: 0.1,  group: 'Spawning', type: 'number', default: 0.8 },
+    maxParticles:         { min: 50,  max: 1000, step: 50,   group: 'Spawning', type: 'number', default: 350 },
+    // Pointer Physics
+    forceRadius:          { min: 0,   max: 500,  step: 10,   group: 'Pointer', type: 'number', default: 120 },
+    pushStrength:         { min: 0,   max: 2000, step: 50,   group: 'Pointer', type: 'number', default: 800 },
+    repelStrength:        { min: 0,   max: 500,  step: 10,   group: 'Pointer', type: 'number', default: 150 },
+    // Accumulation
+    accumulationRate:     { min: 0,   max: 5,    step: 0.1,  group: 'Accumulation', type: 'number', default: 0.8 },
+    maxSnowHeight:        { min: 0,   max: 0.5,  step: 0.01, group: 'Accumulation', type: 'number', default: 0.05 },
+    accumulationSegments: { min: 4,   max: 48,   step: 1,    group: 'Accumulation', type: 'number', default: 12 },
+    // Wind
+    windStrength:         { min: 0,   max: 100,  step: 1,    group: 'Wind', type: 'number', default: 15 },
+    gustFrequency:        { min: 0,   max: 10,   step: 0.5,  group: 'Wind', type: 'number', default: 3 },
+    // Debug
+    debugMode:            { group: 'Debug', type: 'boolean', default: true },
+};
+
+const GROUP_ORDER = ['Spawning', 'Pointer', 'Accumulation', 'Wind', 'Debug'];
+
 let riveInstance = null;
-let stateMachineInputs = {};
+let viewModelInstance = null;
+let viewModelProperties = {};
 let canvasElement = null;
 
 /**
@@ -21,10 +45,7 @@ export async function initSnowfall(canvas) {
         return false;
     }
 
-    // Store canvas reference for resize handling
     canvasElement = canvas;
-
-    // Resize canvas to fill container
     resizeCanvas();
 
     const riveRuntime = window.rive;
@@ -36,14 +57,15 @@ export async function initSnowfall(canvas) {
                 canvas: canvas,
                 autoplay: true,
                 stateMachines: 'SnowfallStateMachine',
-                fit: riveRuntime.Fit.Cover,
+                autoBind: true, // Enable ViewModel auto-binding
+                fit: riveRuntime.Fit.Fill,
                 alignment: riveRuntime.Alignment.Center,
 
                 onLoad: () => {
                     log('Snowfall Rive file loaded');
 
-                    // Try to find and cache state machine inputs
-                    discoverStateMachine();
+                    // Get ViewModel instance for data binding
+                    discoverViewModel();
 
                     riveInstance.resizeDrawingSurfaceToCanvas();
                     buildControls();
@@ -63,48 +85,53 @@ export async function initSnowfall(canvas) {
 }
 
 /**
- * Discover state machine and cache inputs
+ * Discover ViewModel and cache property accessors
  */
-function discoverStateMachine() {
+function discoverViewModel() {
     if (!riveInstance) return;
 
-    // State machine names to try (specific first, then common fallbacks)
-    const smNames = ['SnowfallStateMachine', 'State Machine 1', 'StateMachine', 'Main', 'Default'];
+    viewModelInstance = riveInstance.viewModelInstance;
 
-    for (const name of smNames) {
+    if (!viewModelInstance) {
+        log('No ViewModel instance found - controls will use defaults');
+        return;
+    }
+
+    log('Found ViewModel instance, discovering properties...');
+
+    // Try to get each property from the ViewModel
+    Object.entries(INPUT_CONFIG).forEach(([name, config]) => {
         try {
-            const inputs = riveInstance.stateMachineInputs(name);
-            if (inputs && inputs.length > 0) {
-                log(`Found state machine: "${name}" with ${inputs.length} inputs`);
-                inputs.forEach(input => {
-                    stateMachineInputs[input.name] = input;
-                    log(`  - ${input.name} (${getInputTypeName(input.type)})`);
-                });
-                return;
+            let prop = null;
+            if (config.type === 'number') {
+                prop = viewModelInstance.number(name);
+            } else if (config.type === 'boolean') {
+                prop = viewModelInstance.boolean(name);
+            }
+
+            if (prop) {
+                viewModelProperties[name] = prop;
+                log(`  - ${name} (${config.type}) = ${prop.value}`);
+
+                // Initialize with default if value is 0/false and we have a default
+                if (config.default !== undefined) {
+                    if ((config.type === 'number' && prop.value === 0) ||
+                        (config.type === 'boolean' && prop.value === false && config.default === true)) {
+                        prop.value = config.default;
+                        log(`    → Set default: ${config.default}`);
+                    }
+                }
             }
         } catch (err) {
-            // State machine not found, try next
+            log(`  - ${name}: not found in ViewModel`);
         }
-    }
+    });
 
-    log('No state machine inputs found - animation plays automatically');
+    log(`Discovered ${Object.keys(viewModelProperties).length} ViewModel properties`);
 }
 
 /**
- * Get human-readable input type name
- */
-function getInputTypeName(type) {
-    const riveRuntime = window.rive;
-    switch (type) {
-        case riveRuntime.StateMachineInputType.Boolean: return 'Boolean';
-        case riveRuntime.StateMachineInputType.Number: return 'Number';
-        case riveRuntime.StateMachineInputType.Trigger: return 'Trigger';
-        default: return 'Unknown';
-    }
-}
-
-/**
- * Build UI controls based on discovered inputs
+ * Build UI controls based on ViewModel properties, grouped by category
  */
 function buildControls() {
     const container = document.getElementById('controlsContainer');
@@ -112,81 +139,126 @@ function buildControls() {
 
     if (!container) return;
 
-    // Clear existing controls
     container.innerHTML = '';
 
-    const riveRuntime = window.rive;
-    let hasControls = false;
+    // Group properties by category
+    const groups = {};
+    GROUP_ORDER.forEach(g => groups[g] = []);
 
-    Object.entries(stateMachineInputs).forEach(([name, input]) => {
-        hasControls = true;
-
-        if (input.type === riveRuntime.StateMachineInputType.Boolean) {
-            // Create toggle checkbox
-            const label = document.createElement('label');
-            label.className = 'toggle-control';
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = input.value;
-            checkbox.addEventListener('change', (e) => {
-                input.value = e.target.checked;
-                log(`Set ${name} = ${e.target.checked}`);
-            });
-
-            const span = document.createElement('span');
-            span.textContent = formatInputName(name);
-
-            label.appendChild(checkbox);
-            label.appendChild(span);
-            container.appendChild(label);
-        }
-        else if (input.type === riveRuntime.StateMachineInputType.Number) {
-            // Create slider
-            const div = document.createElement('div');
-            div.className = 'slider-control';
-
-            const span = document.createElement('span');
-            span.textContent = formatInputName(name);
-
-            const slider = document.createElement('input');
-            slider.type = 'range';
-            slider.min = '0';
-            slider.max = '100';
-            slider.value = input.value || 50;
-
-            const output = document.createElement('output');
-            output.textContent = slider.value;
-
-            slider.addEventListener('input', (e) => {
-                const val = parseFloat(e.target.value);
-                input.value = val;
-                output.textContent = val;
-            });
-
-            div.appendChild(span);
-            div.appendChild(slider);
-            div.appendChild(output);
-            container.appendChild(div);
-        }
-        else if (input.type === riveRuntime.StateMachineInputType.Trigger) {
-            // Create button
-            const btn = document.createElement('button');
-            btn.className = 'trigger-btn';
-            btn.textContent = formatInputName(name);
-            btn.addEventListener('click', () => {
-                input.fire();
-                log(`Fired ${name}`);
-            });
-            container.appendChild(btn);
-        }
+    Object.entries(INPUT_CONFIG).forEach(([name, config]) => {
+        const prop = viewModelProperties[name];
+        const group = config.group || 'Other';
+        if (!groups[group]) groups[group] = [];
+        groups[group].push({ name, prop, config });
     });
 
-    // Hide controls panel if no inputs found
+    let hasControls = false;
+
+    // Render each group
+    GROUP_ORDER.forEach(groupName => {
+        const items = groups[groupName];
+        if (!items || items.length === 0) return;
+
+        // Check if any items in group have properties
+        const hasProps = items.some(({ prop }) => prop);
+        if (!hasProps) return;
+
+        hasControls = true;
+
+        // Group header
+        const header = document.createElement('h3');
+        header.className = 'control-group-header';
+        header.textContent = groupName;
+        container.appendChild(header);
+
+        // Group controls
+        items.forEach(({ name, prop, config }) => {
+            if (!prop) return; // Skip properties not in ViewModel
+
+            if (config.type === 'boolean') {
+                container.appendChild(createBooleanControl(name, prop, config));
+            } else if (config.type === 'number') {
+                container.appendChild(createNumberControl(name, prop, config));
+            }
+        });
+    });
+
     if (!hasControls && controlsPanel) {
         controlsPanel.classList.add('hidden');
         log('No controls to display - hiding panel');
+    } else {
+        controlsPanel?.classList.remove('hidden');
+        log(`Built ${Object.keys(viewModelProperties).length} controls`);
     }
+}
+
+/**
+ * Create a boolean toggle control
+ */
+function createBooleanControl(name, prop, config) {
+    const label = document.createElement('label');
+    label.className = 'toggle-control';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = prop.value;
+    checkbox.addEventListener('change', (e) => {
+        prop.value = e.target.checked;
+        log(`Set ${name} = ${e.target.checked}`);
+    });
+
+    const span = document.createElement('span');
+    span.textContent = formatInputName(name);
+
+    label.appendChild(checkbox);
+    label.appendChild(span);
+    return label;
+}
+
+/**
+ * Create a number slider control with proper min/max/step
+ */
+function createNumberControl(name, prop, config) {
+    const div = document.createElement('div');
+    div.className = 'slider-control';
+
+    const span = document.createElement('span');
+    span.textContent = formatInputName(name);
+
+    const currentVal = prop.value ?? config.default ?? 0;
+    const min = config.min ?? 0;
+    const max = config.max ?? Math.max(100, currentVal * 3);
+    const step = config.step ?? (max <= 1 ? 0.01 : 1);
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = min;
+    slider.max = max;
+    slider.step = step;
+    slider.value = currentVal;
+
+    const output = document.createElement('output');
+    output.textContent = formatNumber(currentVal, step);
+
+    slider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        prop.value = val;
+        output.textContent = formatNumber(val, step);
+    });
+
+    div.appendChild(span);
+    div.appendChild(slider);
+    div.appendChild(output);
+    return div;
+}
+
+/**
+ * Format number for display based on step precision
+ */
+function formatNumber(val, step) {
+    if (step >= 1) return Math.round(val).toString();
+    const decimals = Math.max(0, Math.ceil(-Math.log10(step)));
+    return val.toFixed(decimals);
 }
 
 /**
@@ -228,24 +300,25 @@ export function cleanup() {
         riveInstance.cleanup();
         riveInstance = null;
     }
-    stateMachineInputs = {};
+    viewModelInstance = null;
+    viewModelProperties = {};
     log('Snowfall cleaned up');
 }
 
 /**
- * Get a state machine input by name
+ * Get a ViewModel property by name
  */
-export function getInput(name) {
-    return stateMachineInputs[name];
+export function getProperty(name) {
+    return viewModelProperties[name];
 }
 
 /**
- * Fire a trigger input
+ * Set a ViewModel property value
  */
-export function fireTrigger(name) {
-    const input = stateMachineInputs[name];
-    if (input && input.type === window.rive.StateMachineInputType.Trigger) {
-        input.fire();
+export function setProperty(name, value) {
+    const prop = viewModelProperties[name];
+    if (prop) {
+        prop.value = value;
         return true;
     }
     return false;

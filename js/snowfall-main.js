@@ -79,6 +79,11 @@ window.addEventListener('beforeunload', cleanup);
 // Handle window resize
 window.addEventListener('resize', debounce(handleResize, 250));
 
+// Handle devicePixelRatio changes (e.g., moving window between displays)
+window
+    .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+    .addEventListener('change', handleResize);
+
 /**
  * Simple debounce utility
  */
