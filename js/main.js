@@ -10,6 +10,7 @@ import { initSceneController, onSceneChange } from './scene-controller.js';
 import { initBottomSheet } from './bottom-sheet.js';
 import { initHeader } from './header.js';
 import { log } from './logger.js';
+import { waitForRive, debounce } from './utils.js';
 import * as dataAdapter from './data-adapter.js';
 
 // Re-export for backwards compatibility
@@ -39,33 +40,6 @@ function initFPSCounter() {
     }
 
     requestAnimationFrame(updateFPS);
-}
-
-/**
- * Check if Rive runtime is available
- */
-function isRiveAvailable() {
-    return typeof window.rive !== 'undefined';
-}
-
-/**
- * Wait for Rive runtime to load (with timeout)
- */
-async function waitForRive(timeout = 5000) {
-    const start = Date.now();
-
-    return new Promise((resolve) => {
-        function check() {
-            if (isRiveAvailable()) {
-                resolve(true);
-            } else if (Date.now() - start > timeout) {
-                resolve(false);
-            } else {
-                setTimeout(check, 100);
-            }
-        }
-        check();
-    });
 }
 
 /**
@@ -151,17 +125,6 @@ async function init() {
     } finally {
         showLoading(false);
     }
-}
-
-/**
- * Simple debounce utility
- */
-function debounce(fn, delay) {
-    let timeoutId;
-    return (...args) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
-    };
 }
 
 // Start when DOM is ready

@@ -1,7 +1,7 @@
 // js/scene-controller.js
 // Scene management - switching between artboards and handling overlay mode
 
-import { CONFIG, SCENES } from './config.js';
+import { CONFIG, SCENES, UI_CONSTANTS } from './config.js';
 import { initRiveWithScene, resetToScene, cleanup as cleanupRive, getCurrentBuddy } from './rive-controller.js';
 import { log } from './logger.js';
 
@@ -27,9 +27,15 @@ export function getSceneConfig(sceneId) {
 /**
  * Register callback for scene changes
  * @param {Function} callback - Called with (newSceneId, oldSceneId)
+ * @returns {Function} - Unsubscribe function to remove the callback
  */
 export function onSceneChange(callback) {
     onSceneChangeCallbacks.push(callback);
+    // Return unsubscribe function to prevent memory leaks
+    return () => {
+        const idx = onSceneChangeCallbacks.indexOf(callback);
+        if (idx > -1) onSceneChangeCallbacks.splice(idx, 1);
+    };
 }
 
 /**
@@ -158,7 +164,7 @@ function updateCanvasDimensions(sceneConfig) {
         // For overlay, set the overlay canvas dimensions
         if (overlayCanvas) {
             // Scale to fit full viewport while maintaining aspect ratio
-            const padding = 32;  // Small padding for close button clearance
+            const padding = UI_CONSTANTS.OVERLAY_PADDING;
             const maxWidth = window.innerWidth - padding;
             const maxHeight = window.innerHeight - padding;
             const scale = Math.min(maxWidth / sceneConfig.width, maxHeight / sceneConfig.height);

@@ -4,33 +4,7 @@
 import { initHeader } from './header.js';
 import { initSnowfall, cleanup, handleResize } from './snowfall-controller.js';
 import { log } from './logger.js';
-
-/**
- * Check if Rive runtime is available
- */
-function isRiveAvailable() {
-    return typeof window.rive !== 'undefined';
-}
-
-/**
- * Wait for Rive runtime to load (with timeout)
- */
-async function waitForRive(timeout = 5000) {
-    const start = Date.now();
-
-    return new Promise((resolve) => {
-        function check() {
-            if (isRiveAvailable()) {
-                resolve(true);
-            } else if (Date.now() - start > timeout) {
-                resolve(false);
-            } else {
-                setTimeout(check, 100);
-            }
-        }
-        check();
-    });
-}
+import { waitForRive, debounce } from './utils.js';
 
 /**
  * Main initialization
@@ -83,17 +57,6 @@ window.addEventListener('resize', debounce(handleResize, 250));
 window
     .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
     .addEventListener('change', handleResize);
-
-/**
- * Simple debounce utility
- */
-function debounce(fn, delay) {
-    let timeoutId;
-    return (...args) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
-    };
-}
 
 // Start when DOM is ready
 if (document.readyState === 'loading') {

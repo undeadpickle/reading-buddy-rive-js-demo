@@ -1,5 +1,10 @@
 // js/config.js
 // Configuration and constants for the Reading Buddy demo
+//
+// Rive Runtime Notes:
+// - index.html uses @rive-app/canvas@2.33.1 (lighter weight, good for character animation)
+// - snowfall.html uses @rive-app/webgl@2.34.1 (required for Lua script particle effects)
+// - Keep versions pinned in HTML script tags; test before upgrading
 
 export const CONFIG = {
     RIVE_FILE: './public/rive/reading-buddy.riv',
@@ -117,3 +122,13 @@ export const ANIMATION_MAPPING = {
 
 // Dialogue contexts from Epic's API (keys in buddy.dialog object)
 export const DIALOGUE_CONTEXTS = ['adventure', 'celebration', 'hatch', 'celebrationEgg'];
+
+// Centralized UI constants (avoid magic numbers scattered across files)
+export const UI_CONSTANTS = {
+    MOBILE_BREAKPOINT: 900,      // px - bottom sheet vs desktop layout
+    MAX_STARS: 3,                // Gamification star count
+    OVERLAY_PADDING: 32,         // px - padding around overlay canvas
+    MAX_LOG_ENTRIES: 100,        // Debug log max entries before pruning
+    RIVE_LOAD_TIMEOUT: 5000,     // ms - timeout for Rive runtime to load
+    DEBOUNCE_RESIZE: 250,        // ms - resize event debounce delay
+};

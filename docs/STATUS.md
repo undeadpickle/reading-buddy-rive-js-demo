@@ -1,9 +1,10 @@
 # Current Status
 
-**Last Updated:** Scene switching implemented
+**Last Updated:** 2026-01-16
 
 ## Progress
 
+### Core Features
 - [x] Phase 1A: Mock API data files
 - [x] Phase 1B: Animation mapping config
 - [x] Phase 1C: Data adapter module
@@ -13,60 +14,89 @@
 - [x] Phase 3B: Wire dialogue system
 - [x] Phase 3C: Canvas tap response
 - [x] Phase 4: Documentation
+- [x] Scene Switching: Multi-artboard support with fast reset optimization
+
+### Recent Features (2026-01)
+- [x] Mobile UI: Bottom sheet, FAB toggle, auto-collapse on interactions
+- [x] Epic Header: Logo and branding
+- [x] Project Switcher: Dropdown to switch between demos
+- [x] Snowfall Particles Demo: Lua script particle system with ViewModel binding
+- [x] ViewModel UI Controls: Runtime control of Lua script parameters
+
+### Pending
 - [ ] Phase 5A: Add trig_giggle animation (Rive)
 - [ ] Phase 5B: Add trig_celebrate animation (Rive)
-- [ ] Phase 5C: Update JS config
-- [x] Scene Switching: Multi-artboard support
+- [ ] Phase 5C: Update JS config for new animations
 
-## Status: IN PROGRESS
+## Status: ACTIVE DEVELOPMENT
+
+### Snowfall Particles Demo (COMPLETE)
+
+New demo page (`snowfall.html`) showcasing Rive's Lua scripting capabilities:
+- Full-viewport particle system with physics simulation
+- ViewModel data binding between JS and Lua script
+- Runtime-adjustable parameters (flow rate, velocity, wind, accumulation)
+- Uses WebGL runtime (`@rive-app/webgl@2.34.1`) for particle performance
+- Lua script located at `public/rive/rive-scripts/SnowflakeParticles.luau`
+
+### Mobile UI (COMPLETE)
+
+Responsive controls for mobile devices:
+- Bottom sheet pattern for control panel
+- Floating action button (FAB) to toggle controls
+- Auto-collapse after user interactions (buddy select, animation trigger)
+- Graceful resize handling between mobile/desktop
 
 ### Scene Switching (COMPLETE)
 
-Added multi-artboard scene switching with three scenes:
+Multi-artboard support with three scenes:
 - **Reading Buddy** (default): Standard buddy view with all controls
 - **Adventure Page**: Taller layout with buddy + speech bubble
 - **Star Rewards**: Full-screen overlay with treasure chest animation
 
 Key implementation details:
 - Artboards must be marked as "components" (Shift+N) in Rive Editor to export
-- Cache busting via `RIVE_FILE_VERSION` in config.js prevents stale .riv issues
-- Scene controller manages canvas vs overlay display modes
-- Control panel visibility toggles per scene configuration
-- **Performance optimization**: Same-canvas scene switches use `riveInstance.reset()` to avoid re-decoding OOB assets. Full reinit only occurs for overlay transitions or buddy changes.
-
-### Phase 5 (PENDING)
-
-Phase 5 adds distinct animations for tap response (`trig_giggle`) and star celebration (`trig_celebrate`).
-
-See [phase-5-rive-enhancements.md](./phases/phase-5-rive-enhancements.md) for detailed instructions.
+- Cache busting via `RIVE_FILE_VERSION` in config.js
+- **Performance optimization**: Same-canvas scene switches use `riveInstance.reset()` to avoid re-decoding OOB assets
 
 ## Recent Commits
 
 ```
-eca551c Phase 4: Add integration documentation
-9702461 Phase 3C: Add canvas tap response
-ff7aa76 Phase 3B: Wire dialogue system to data adapter
-2792d67 Phase 3A: Wire gamification buttons to data adapter
-58be0b4 Phase 2B: Add gamification controls and UI module
+36fccb0 Add ViewModel UI controls for Snowfall particles
+4cf0611 Add project switcher dropdown and Snowfall Particles demo
+1440aa5 Mobile UI polish: sheet collapse, FAB icon, overlay improvements
+943c9ff Clean up mobile sheet: remove title, auto-scroll to top on close
+3fd96e5 Add floating action button for mobile controls
+dccf4bf Fix bottom sheet click detection on desktop resize
+65304a2 Add mobile bottom sheet for responsive controls
+9270093 Consolidate and trim documentation
+0b65648 Add Epic header with logo to demo page
+9fbcfc9 Optimize scene switching with reset() to avoid re-decoding OOB assets
 ```
 
-## Files Created/Modified So Far
+## Files Created/Modified
 
-- `public/api/buddy.json` - Mock getBuddy response (Epic exact structure)
+### Core Modules
+- `js/config.js` - ANIMATION_MAPPING, DIALOGUE_CONTEXTS, SCENES, RIVE_FILE_VERSION, UI_CONSTANTS
+- `js/rive-controller.js` - initRiveWithScene(), resetToScene(), ViewModel binding
+- `js/scene-controller.js` - Scene switching logic, overlay management
+- `js/data-adapter.js` - Epic API compatibility layer
+- `js/ui-controls.js` - Scene selector, dialogue presets, canvas click handler
+- `js/gamification-ui.js` - Star counter UI
+- `js/utils.js` - Shared utilities (debounce, waitForRive)
+
+### New Modules (2026-01)
+- `js/bottom-sheet.js` - Mobile bottom sheet behavior
+- `js/header.js` - Project switcher dropdown
+- `js/projects.js` - Multi-project registry
+- `js/logger.js` - Centralized logging
+- `js/snowfall-controller.js` - Snowfall demo Rive controller
+- `js/snowfall-main.js` - Snowfall demo entry point
+
+### Assets
+- `public/api/buddy.json` - Mock getBuddy response
 - `public/api/daily-tasks.json` - Mock getTasksForToday response
-- `js/config.js` - Added ANIMATION_MAPPING, DIALOGUE_CONTEXTS, SCENES, RIVE_FILE_VERSION
-- `js/data-adapter.js` - Epic API → Rive compatibility layer, added `getAllDialogues()` (Phase 3B)
-- `js/gamification-ui.js` - Star counter state and animations (NEW, Phase 2B), wired to data adapter (Phase 3A)
-- `js/ui-controls.js` - Added `populateDialoguePresets()` (Phase 3B), canvas click handler (Phase 3C), scene selector
-- `js/main.js` - Added data adapter + gamification UI imports, scene controller init
-- `js/scene-controller.js` - Scene switching logic, overlay management, fast reset detection (NEW)
-- `js/rive-controller.js` - Added `initRiveWithScene()` for multi-artboard support, `resetToScene()` for fast artboard switching, cache busting
-- `index.html` - Added star-progress UI (2A) + gamification controls (2B) + scene selector + overlay
-- `css/styles.css` - Added star styles (Phase 2A) + scene/overlay styles
-
-## Rollback Point
-
-If anything breaks, revert to: `main` branch or commit before Phase 1A
+- `public/rive/rive-scripts/SnowflakeParticles.luau` - Lua particle script
 
 ## Collaboration Notes
 

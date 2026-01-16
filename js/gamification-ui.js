@@ -2,11 +2,12 @@
 // Gamification UI module - star counter state and animations
 // NOTE: Placeholder stars for testing data flow. Real stars will be Rive scene.
 
+import { UI_CONSTANTS } from './config.js';
 import { log } from './logger.js';
 import * as dataAdapter from './data-adapter.js';
 
 let currentStars = 0;
-let maxStars = 3;
+let maxStars = UI_CONSTANTS.MAX_STARS;
 
 /**
  * Initialize gamification UI and wire up button handlers
@@ -53,7 +54,7 @@ export function initGamificationUI() {
  * @param {number} earned - Number of stars earned
  * @param {number} max - Maximum stars (default 3)
  */
-export function updateStars(earned, max = 3) {
+export function updateStars(earned, max = UI_CONSTANTS.MAX_STARS) {
     currentStars = earned;
     maxStars = max;
 

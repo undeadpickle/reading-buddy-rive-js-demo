@@ -1,12 +1,14 @@
 // js/bottom-sheet.js
 // Mobile bottom sheet behavior for control panel
 
+import { UI_CONSTANTS } from './config.js';
+
 let isExpanded = false;
 let controlPanel = null;
 let sheetHandle = null;
 let mobileFab = null;
 
-const MOBILE_BREAKPOINT = 900;
+const MOBILE_BREAKPOINT = UI_CONSTANTS.MOBILE_BREAKPOINT;
 
 /**
  * Check if viewport is mobile width

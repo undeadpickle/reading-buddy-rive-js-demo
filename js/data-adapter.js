@@ -2,14 +2,14 @@
 // Compatibility layer: Epic API data → Rive animations
 // Translates Lottie playSegment() calls to Rive triggers
 
-import { ANIMATION_MAPPING } from './config.js';
+import { ANIMATION_MAPPING, UI_CONSTANTS } from './config.js';
 import { fireTrigger, setBoolean } from './rive-controller.js';
 import { log } from './logger.js';
 
 // Module state
 let buddyData = null;
 let starCount = 0;
-const MAX_STARS = 3;
+const MAX_STARS = UI_CONSTANTS.MAX_STARS;
 
 /**
  * Load buddy data from mock API

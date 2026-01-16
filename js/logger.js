@@ -1,6 +1,8 @@
 // js/logger.js
 // Centralized logging utility
 
+import { UI_CONSTANTS } from './config.js';
+
 /**
  * Logging utility with timestamp and debug panel output
  * @param {string} message
@@ -18,7 +20,7 @@ export function log(message, level = 'info') {
         entry.textContent = logEntry;
         debugLog.appendChild(entry);
         debugLog.scrollTop = debugLog.scrollHeight;
-        while (debugLog.children.length > 100) {
+        while (debugLog.children.length > UI_CONSTANTS.MAX_LOG_ENTRIES) {
             debugLog.removeChild(debugLog.firstChild);
         }
     }
