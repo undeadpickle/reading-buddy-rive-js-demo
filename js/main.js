@@ -8,6 +8,7 @@ import { initControls, showLoading, showPlaceholder, updateCurrentBuddyDisplay, 
 import { initGamificationUI } from './gamification-ui.js';
 import { initSceneController, onSceneChange } from './scene-controller.js';
 import { initBottomSheet } from './bottom-sheet.js';
+import { initHeader } from './header.js';
 import { log } from './logger.js';
 import * as dataAdapter from './data-adapter.js';
 
@@ -71,6 +72,7 @@ async function waitForRive(timeout = 5000) {
  * Main initialization
  */
 async function init() {
+    initHeader();
     log('Reading Buddy Demo initializing...');
     showLoading(true);
 

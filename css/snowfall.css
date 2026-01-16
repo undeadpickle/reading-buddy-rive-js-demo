@@ -1,0 +1,134 @@
+/* css/snowfall.css */
+/* Snowfall page-specific styles */
+
+.snowfall-container {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+#snowfallCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Loading overlay - dark theme */
+.snowfall-container .loading-overlay {
+    background: rgba(26, 26, 46, 0.9);
+}
+
+.snowfall-container .loading-overlay p {
+    color: #ffffff;
+}
+
+/* Floating control panel */
+.snowfall-controls {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius);
+    padding: var(--spacing);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    min-width: 220px;
+    max-width: 280px;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+}
+
+.snowfall-controls h2 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing);
+    color: var(--text-primary);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.snowfall-controls.hidden {
+    display: none;
+}
+
+/* Control types */
+.toggle-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.toggle-control input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+}
+
+.slider-control {
+    padding: var(--spacing-sm) 0;
+}
+
+.slider-control span {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.slider-control input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+}
+
+.slider-control output {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.trigger-btn {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing);
+    margin: var(--spacing-sm) 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--panel-bg);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.trigger-btn:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+}
+
+.trigger-btn:active {
+    background: var(--accent);
+    color: white;
+}
+
+/* Debug log - dark theme variant */
+.snowfall-container .debug-log {
+    background: rgba(0, 0, 0, 0.8);
+    color: #00ff00;
+}
+
+/* Mobile: bottom sheet style */
+@media (max-width: 900px) {
+    .snowfall-controls {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        max-width: none;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding-bottom: calc(var(--spacing) + env(safe-area-inset-bottom, 0));
+    }
+}

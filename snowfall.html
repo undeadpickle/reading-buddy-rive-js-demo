@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowfall Particles - Rive Demo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x2744;</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/snowfall.css">
+</head>
+<body>
+    <header class="site-header">
+        <img src="public/images/epic-logo.svg" alt="Epic!" class="epic-logo">
+        <!-- Project switcher injected by header.js -->
+    </header>
+
+    <main class="snowfall-container">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p>Loading snowfall...</p>
+        </div>
+
+        <!-- Rive Canvas (full viewport) -->
+        <canvas id="snowfallCanvas"></canvas>
+
+        <!-- Minimal Controls (floating panel) -->
+        <aside class="snowfall-controls" id="snowfallControls">
+            <h2>Snowfall Controls</h2>
+            <div id="controlsContainer">
+                <!-- Dynamically populated based on state machine inputs -->
+            </div>
+        </aside>
+
+        <!-- Debug Log (toggle with backtick) -->
+        <div class="debug-log hidden" id="debugLog"></div>
+    </main>
+
+    <!-- Rive Runtime (WebGL for particle support) -->
+    <script src="https://unpkg.com/@rive-app/webgl@2.34.1"></script>
+
+    <!-- App Scripts -->
+    <script type="module" src="js/snowfall-main.js"></script>
+</body>
+</html>

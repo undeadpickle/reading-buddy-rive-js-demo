@@ -62,6 +62,50 @@ body {
     width: auto;
 }
 
+/* Project Switcher (header dropdown) */
+.project-switcher {
+    margin-left: auto;
+}
+
+.project-selector {
+    padding: 8px 36px 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: var(--font-family);
+    background: var(--panel-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.15s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    min-width: 180px;
+}
+
+.project-selector:hover {
+    border-color: var(--accent);
+    background-color: var(--accent-light);
+}
+
+.project-selector:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+}
+
+@media (max-width: 900px) {
+    .project-selector {
+        min-width: 140px;
+        font-size: 0.8rem;
+        padding: 6px 32px 6px 10px;
+    }
+}
+
 /* Split-screen Layout */
 .demo-container {
     display: grid;
