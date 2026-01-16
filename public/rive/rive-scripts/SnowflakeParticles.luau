@@ -53,6 +53,9 @@ local BOUNDS_BUFFER_X = 100
 -- Bezier curve smoothing
 local BEZIER_HANDLE_FACTOR = 0.35
 
+-- Snow mound variation (per-segment max height randomization)
+local MAX_HEIGHT_VARIATION = 0.25
+
 -- Cool blue colors for snowflakes
 local COLORS: { Color } = {
   Color.rgba(173, 216, 230, 255),
@@ -114,6 +117,7 @@ type SnowflakeParticles = {
 
   -- Accumulation state
   snowHeights: { number },
+  snowMaxHeights: { number },
   segmentWidth: number,
 
   -- OPTIMIZATION #1: Unit path for particles
@@ -206,8 +210,24 @@ local function initSnowHeights(self: SnowflakeParticles)
   local canvasWidth = self.canvasSize.x
 
   self.snowHeights = {}
+  self.snowMaxHeights = {}
+
+  -- Generate randomized max height multipliers for each segment
   for i = 1, segments do
     self.snowHeights[i] = 0
+    local variation = randomRange(1 - MAX_HEIGHT_VARIATION, 1 + MAX_HEIGHT_VARIATION)
+    self.snowMaxHeights[i] = variation
+  end
+
+  -- Smooth the multipliers so adjacent segments form natural mounds
+  for pass = 1, 2 do
+    local smoothed = {}
+    for i = 1, segments do
+      local left = self.snowMaxHeights[i - 1] or self.snowMaxHeights[i]
+      local right = self.snowMaxHeights[i + 1] or self.snowMaxHeights[i]
+      smoothed[i] = (left + self.snowMaxHeights[i] * 2 + right) / 4
+    end
+    self.snowMaxHeights = smoothed
   end
 
   if canvasWidth > 0 then
@@ -674,23 +694,26 @@ local function advance(self: SnowflakeParticles, seconds: number): boolean
     local removeByLife = p.age >= p.lifespan
 
     if removeByAccum then
-      -- Add to snow accumulation
-      if currentSnowHeight < maxSnowHeightPx then
+      -- Add to snow accumulation (per-segment max for natural mounds)
+      local segmentMax = maxSnowHeightPx * (self.snowMaxHeights[segmentIndex] or 1)
+      if currentSnowHeight < segmentMax then
         local addAmount = accumulationRate
         self.snowHeights[segmentIndex] = math.min(
           (self.snowHeights[segmentIndex] or 0) + addAmount * ACCUMULATION_CENTER_WEIGHT,
-          maxSnowHeightPx
+          segmentMax
         )
         if segmentIndex > 1 then
+          local leftMax = maxSnowHeightPx * (self.snowMaxHeights[segmentIndex - 1] or 1)
           self.snowHeights[segmentIndex - 1] = math.min(
             (self.snowHeights[segmentIndex - 1] or 0) + addAmount * ACCUMULATION_NEIGHBOR_WEIGHT,
-            maxSnowHeightPx
+            leftMax
           )
         end
         if segmentIndex < self.accumulationSegments then
+          local rightMax = maxSnowHeightPx * (self.snowMaxHeights[segmentIndex + 1] or 1)
           self.snowHeights[segmentIndex + 1] = math.min(
             (self.snowHeights[segmentIndex + 1] or 0) + addAmount * ACCUMULATION_NEIGHBOR_WEIGHT,
-            maxSnowHeightPx
+            rightMax
           )
         end
         -- ============================================================
@@ -1028,7 +1051,7 @@ return function(): Layout<SnowflakeParticles>
     maxParticles = 350,
     windStrength = 15,
     gustFrequency = 3,
-    debugMode = true,
+    debugMode = false,
     -- Canvas dimensions from JS (0 = use resize callback dimensions)
     canvasWidth = 0,
     canvasHeight = 0,
@@ -1043,6 +1066,7 @@ return function(): Layout<SnowflakeParticles>
     lastPointerPos = nil,
 
     snowHeights = {},
+    snowMaxHeights = {},
     segmentWidth = 1,
 
     unitPath = late(),

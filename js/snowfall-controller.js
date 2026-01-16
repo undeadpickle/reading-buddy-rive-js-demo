@@ -26,7 +26,7 @@ const INPUT_CONFIG = {
     windStrength:         { min: 0,   max: 100,  step: 1,    group: 'Wind', type: 'number', default: 15 },
     gustFrequency:        { min: 0,   max: 10,   step: 0.5,  group: 'Wind', type: 'number', default: 3 },
     // Debug
-    debugMode:            { group: 'Debug', type: 'boolean', default: true },
+    debugMode:            { group: 'Debug', type: 'boolean', default: false },
 };
 
 const GROUP_ORDER = ['Spawning', 'Pointer', 'Accumulation', 'Wind', 'Debug'];
