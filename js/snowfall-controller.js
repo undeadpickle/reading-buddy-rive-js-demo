@@ -5,7 +5,7 @@ import { log } from './logger.js';
 
 const SNOWFALL_CONFIG = {
     riveFile: './public/rive/snow-fall-particles.riv',
-    fileVersion: 4, // Bump for 1920x1080 artboard
+    fileVersion: 7, // Bump for Layout object syntax
 };
 
 // Input configurations with proper ranges (derived from Rive script defaults)
@@ -27,6 +27,9 @@ const INPUT_CONFIG = {
     gustFrequency:        { min: 0,   max: 10,   step: 0.5,  group: 'Wind', type: 'number', default: 3 },
     // Debug
     debugMode:            { group: 'Debug', type: 'boolean', default: false },
+    // Canvas dimensions (hidden from UI, passed to Lua script)
+    canvasWidth:          { group: 'Internal', type: 'number', hidden: true },
+    canvasHeight:         { group: 'Internal', type: 'number', hidden: true },
 };
 
 const GROUP_ORDER = ['Spawning', 'Pointer', 'Accumulation', 'Wind', 'Debug'];
@@ -58,14 +61,19 @@ export async function initSnowfall(canvas) {
                 autoplay: true,
                 stateMachines: 'SnowfallStateMachine',
                 autoBind: true, // Enable ViewModel auto-binding
-                fit: riveRuntime.Fit.Fill,
-                alignment: riveRuntime.Alignment.Center,
+                layout: new riveRuntime.Layout({
+                    fit: riveRuntime.Fit.Layout,
+                    alignment: riveRuntime.Alignment.TopLeft,
+                }),
 
                 onLoad: () => {
                     log('Snowfall Rive file loaded');
 
                     // Get ViewModel instance for data binding
                     discoverViewModel();
+
+                    // Pass initial canvas dimensions to Lua script
+                    updateCanvasDimensions();
 
                     riveInstance.resizeDrawingSurfaceToCanvas();
                     buildControls();
@@ -174,6 +182,7 @@ function buildControls() {
         // Group controls
         items.forEach(({ name, prop, config }) => {
             if (!prop) return; // Skip properties not in ViewModel
+            if (config.hidden) return; // Skip hidden properties (internal use only)
 
             if (config.type === 'boolean') {
                 container.appendChild(createBooleanControl(name, prop, config));
@@ -280,6 +289,27 @@ function resizeCanvas() {
     const container = canvasElement.parentElement;
     canvasElement.width = container.clientWidth;
     canvasElement.height = container.clientHeight;
+
+    // Pass canvas dimensions to Rive ViewModel for Lua script
+    updateCanvasDimensions();
+}
+
+/**
+ * Pass canvas dimensions to Rive ViewModel
+ * With Fit.Layout, the artboard resizes to match the canvas,
+ * so Lua coordinates = canvas coordinates. Pass CSS dimensions.
+ */
+function updateCanvasDimensions() {
+    if (!viewModelInstance || !canvasElement) return;
+
+    const widthProp = viewModelProperties['canvasWidth'];
+    const heightProp = viewModelProperties['canvasHeight'];
+
+    // Use clientWidth/clientHeight (CSS pixels)
+    if (widthProp) widthProp.value = canvasElement.clientWidth;
+    if (heightProp) heightProp.value = canvasElement.clientHeight;
+
+    log(`Canvas dimensions: ${canvasElement.clientWidth}x${canvasElement.clientHeight}`);
 }
 
 /**

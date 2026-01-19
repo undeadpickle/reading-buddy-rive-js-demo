@@ -119,6 +119,35 @@ if (prop) prop.value = newValue;
 - Use Context7 MCP with `rive-app/rive-docs` for API docs
 - Scene switching uses `riveInstance.reset()` to avoid re-decoding OOB assets
 
+### Responsive Full-Width/Height Canvas (Fit.Layout)
+
+For Rive animations that need to fill the entire canvas and respond to resize:
+
+```javascript
+new rive.Rive({
+    src: 'file.riv',
+    canvas: canvasElement,
+    layout: new rive.Layout({
+        fit: rive.Fit.Layout,
+        alignment: rive.Alignment.TopLeft,
+    }),
+    // ...
+});
+```
+
+**Critical:** Must use `new Layout({...})` object syntax, not direct `fit:` property.
+
+- `Fit.Layout` makes the artboard resize to match canvas dimensions
+- Lua coordinates = canvas CSS coordinates (no scaling math needed)
+- Pass actual canvas dimensions to ViewModel for Lua scripts:
+  ```javascript
+  widthProp.value = canvas.clientWidth;
+  heightProp.value = canvas.clientHeight;
+  ```
+- Call `riveInstance.resizeDrawingSurfaceToCanvas()` on window resize
+
+See [snowfall-controller.js](js/snowfall-controller.js) for working example.
+
 ## Critical Gotchas
 
 ### Export vs Save
@@ -128,7 +157,11 @@ if (prop) prop.value = newValue;
 Only artboards marked as **components** are included in .riv export. Select artboard → `Shift+N` to toggle. Symptom: "Invalid artboard name" error when switching scenes.
 
 ### Browser Cache
-Symptoms: old .riv, stale assets, animations not firing. Fix: bump `RIVE_FILE_VERSION` in config.js, or `Cmd+Shift+R`.
+Symptoms: old .riv, stale assets, animations not firing.
+Fixes:
+- **Manual:** `Cmd+Shift+R` (hard refresh)
+- **Via MCP:** `navigate_page` with `ignoreCache: true` and `type: reload`
+- **Nuclear:** bump `RIVE_FILE_VERSION` in config.js
 
 ## MCP Troubleshooting
 
@@ -138,7 +171,10 @@ Symptoms: old .riv, stale assets, animations not firing. Fix: bump `RIVE_FILE_VE
 3. Restart Claude Code after Rive is running
 4. Check `.mcp.json` has `"rive": { "url": "http://localhost:9791/sse" }`
 
-**Chrome DevTools MCP issues?**
+**Chrome DevTools MCP "browser already running" error?**
+Symptom: `list_pages` fails with "The browser is already running for .../chrome-profile"
+Cause: Stale browser instance from previous session blocking new connection.
 ```bash
-pkill -f "chrome-devtools-mcp"  # Then restart Claude Code
+pkill -f "chrome-devtools-mcp"
 ```
+No need to restart Claude Code — MCP reconnects automatically on next tool call.
