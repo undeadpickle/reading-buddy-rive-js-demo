@@ -1,22 +1,23 @@
 # Session Handoff
 
-> Updated: 2026-01-16 10:50
-> Focus: Snowfall Particles Lua Script Bug Fix + Code Cleanup
+> Updated: 2026-01-18 19:35
+> Focus: Add snowflake particle shapes with UI dropdown
 
 ---
 
 ## What Got Done
 
-- **Fixed snow floor dimension bug**: `buildSnowFloorPath()` was using `self.canvasSize` instead of effective JS dimensions, causing snow floor to render at artboard size instead of full viewport
-- **Extracted magic numbers to constants**: Added named constants for pointer velocity smoothing, accumulation distribution weights, bounds buffer, bezier handle factor
-- **Code review analysis**: Evaluated another AI agent's findings - identified 1 real bug, several non-issues (Rive idioms misidentified as problems)
-- **Verified fixes in browser**: Confirmed snow accumulates correctly across full viewport width, 91% accumulation rate, 0.7ms draw time
+- **Added snowflake particle shapes**: 3 snowflake variants (snowflake-01, -02, -03) render as component artboards instead of rectangles
+- **Created dropdown UI for shape selection**: "Appearance" section with "Particle Shape" dropdown (Rectangle/Snowflake)
+- **Implemented enum input type**: New `createEnumControl()` function for select dropdowns in control panel
+- **Fixed ViewModel discovery bug**: Enum types weren't being discovered because `discoverViewModel()` only handled 'number' and 'boolean'
+- **Set snowflakes as default**: Changed default from Rectangle (0) to Snowflake (1)
 
 ## What's Next
 
-1. **Commit changes**: The `.luau` script and `.riv` file have uncommitted changes ready to commit
-2. **Turn off debug mode for production**: `debugMode = true` in the Lua script defaults - should be `false` for production
-3. **Consider additional polish**: The other agent's notes on caching debug paints could be done if debug mode gets heavy use
+1. **Copy updated Lua script to Rive Editor**: The local `.luau` file has changes but user needs to paste into Rive and re-export for Lua default to take effect
+2. **Test performance with many particles**: Snowflake mode creates artboard instances per particle — may need to reduce `maxParticles` for slower devices
+3. **Add more shape options**: The enum pattern is extensible (circles, stars, custom SVG imports)
 
 ## Blockers
 
@@ -28,57 +29,42 @@
 
 ### What Worked
 
-- **Methodical code review**: Breaking down each point from the other agent's review, checking against actual code, and categorizing as "real bug" vs "design decision" vs "Rive idiom" prevented unnecessary changes
-- **Minimal targeted fix**: Only changed the function signature and call site for `buildSnowFloorPath()` - didn't over-engineer
-- **Chrome DevTools MCP for verification**: Checking console logs and taking screenshots confirmed the fix worked
+- **Rive MCP for ViewModel properties**: `addProperties` worked seamlessly to add `particleShape` to SnowfallViewModel
+- **Context7 for Rive Lua docs**: Found the `artboard:instance()` pattern for cloning component artboards
+- **Chrome DevTools MCP for testing**: Quick dropdown selection and screenshot verification
 
 ### What Broke
 
-- **Chrome DevTools MCP connection**: Initial connection failed with "browser already running" error. Fixed by `pkill -f "chrome-devtools-mcp"` then retrying.
+- **Enum type not discovered in ViewModel**: The `discoverViewModel()` function only checked for `config.type === 'number'` or `'boolean'`, missing the new `'enum'` type. Fixed by adding `|| config.type === 'enum'` to the condition.
 
-### Wrong Assumptions (from other agent's review)
+- **Artboard inputs can't be set via MCP**: Had to guide user through manual Rive Editor setup (marking artboards as Components, adding script inputs, assigning artboards). MCP can modify ViewModel but not link artboard inputs to Lua scripts.
 
-- **"Resize wipes snow is a bug"**: Actually acceptable behavior - proportional rescaling would add complexity for rare edge case
-- **"`late()` orphaning is wasteful"**: Actually correct Rive Lua idiom for deferred initialization
-- **"Type annotations mismatch"**: Actually correct - Rive transforms layout values into Input types at runtime
-- **"`!= 0` ViewModel pattern is a smell"**: Actually intentional - prevents reading uninitialized ViewModel values (default to 0 before JS sets them)
+### Wrong Assumptions
+
+- **Assumed enum would auto-discover**: Since enum values are stored as numbers in the ViewModel, I expected the existing number handling would work. But the JS config check was type-specific, not storage-specific.
+
+- **Assumed MCP could fully configure artboard inputs**: The Rive MCP can add ViewModel properties and create state machines, but linking component artboards to Lua script inputs requires manual Rive Editor work.
 
 ---
 
 ## Quirks Discovered
 
-- **buildSnowFloorPath dimension source**: Functions that build paths need to receive effective dimensions as parameters if they might differ from `self.canvasSize` (which comes from Rive's `resize()` callback, not JS viewport size)
+- **Artboard inputs require manual Rive Editor setup**: Even with MCP, you must: (1) mark artboards as Components (`Shift+N`), (2) select the Lua script, (3) add artboard inputs in the Inputs panel, (4) assign artboards to inputs, (5) Export (not just Save).
+
+- **Enum type needs explicit handling in JS controller**: When adding new input types to `INPUT_CONFIG`, update both `discoverViewModel()` (for property discovery) and `buildControls()` (for UI rendering).
 
 ---
 
 ## Key Files Modified
 
-- `public/rive/rive-scripts/SnowflakeParticles.luau` - Bug fix + constants extraction
-- `public/rive/snow-fall-particles.riv` - Updated with new script (user exported from Rive Editor)
-
-## The Bug Fix
-
-**Before:**
-```lua
-local function buildSnowFloorPath(self: SnowflakeParticles): Path
-  local canvasHeight = self.canvasSize.y  -- Wrong!
-  local canvasWidth = self.canvasSize.x   -- Wrong!
-```
-
-**After:**
-```lua
-local function buildSnowFloorPath(self: SnowflakeParticles, effectiveWidth: number, effectiveHeight: number): Path
-  local canvasHeight = effectiveHeight  -- Correct!
-  local canvasWidth = effectiveWidth    -- Correct!
-```
-
-Call site in `draw()`:
-```lua
-self.snowFloorPath = buildSnowFloorPath(self, canvasWidth, canvasHeight)
-```
+- `js/snowfall-controller.js` — Added enum type handling, `createEnumControl()`, snowflake default
+- `css/snowfall.css` — Added `.select-control` dropdown styling
+- `public/rive/rive-scripts/SnowflakeParticles.luau` — Added artboard inputs, shape switching logic, draw branching
+- `public/rive/snow-fall-particles.riv` — Added `particleShape` ViewModel property + snowflake artboard inputs
 
 ---
 
 ## CLAUDE.md Suggestions
 
-None - CLAUDE.md already documents the ViewModel pattern and the distinction between `canvasSize` (from Rive resize callback) vs JS canvas dimensions. The previous session's suggestions about ViewModel patterns were already incorporated.
+- [ ] Add section on "Adding New Input Types to Snowfall Controller" documenting the enum pattern and what needs updating when adding new types
+- [ ] Add note under "Rive Notes" that artboard/component inputs for Lua scripts require manual Rive Editor setup (MCP can't link them)

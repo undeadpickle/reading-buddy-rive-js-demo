@@ -85,6 +85,9 @@ type Particle = {
   driftPhase: number,
   baseX: number,
   depth: number,
+  -- Snowflake mode fields (optional, only used when particleShape=1)
+  artboard: Artboard<{}>?,
+  snowflakeVariant: number?,
 }
 
 type SnowflakeParticles = {
@@ -101,9 +104,15 @@ type SnowflakeParticles = {
   windStrength: Input<number>,
   gustFrequency: Input<number>,
   debugMode: Input<boolean>,
+  -- Particle shape: 0=rectangle, 1=snowflake
+  particleShape: Input<number>,
   -- Canvas dimensions from JS (for full-viewport spawning)
   canvasWidth: number,
   canvasHeight: number,
+  -- Snowflake component artboard inputs (assigned in Rive Editor)
+  snowflake01: Input<Artboard<{}>>,
+  snowflake02: Input<Artboard<{}>>,
+  snowflake03: Input<Artboard<{}>>,
 
   particles: { Particle },
   topSpawnAccumulator: number,
@@ -359,6 +368,19 @@ local function init(self: SnowflakeParticles, context: Context): boolean
       self.debugMode = debugModeProp.value
       debugModeProp:addListener(function()
         self.debugMode = debugModeProp.value
+      end)
+    end
+
+    -- Particle shape selection (0=rectangle, 1=snowflake)
+    local particleShapeProp = vm:getNumber('particleShape')
+    if particleShapeProp then
+      self.particleShape = particleShapeProp.value
+      particleShapeProp:addListener(function()
+        self.particleShape = particleShapeProp.value
+        if self.debugMode then
+          local shapeName = self.particleShape == 0 and 'Rectangle' or 'Snowflake'
+          print(string.format('[ViewModel] particleShape updated: %s', shapeName))
+        end
       end)
     end
 
@@ -669,6 +691,20 @@ local function advance(self: SnowflakeParticles, seconds: number): boolean
           * self.topVelocity,
         TOP_SPAWN_SPREAD
       )
+
+      -- If in snowflake mode, create artboard instance
+      if self.particleShape == 1 then
+        local variant = math.random(1, 3)
+        particle.snowflakeVariant = variant
+        if variant == 1 and self.snowflake01 then
+          particle.artboard = self.snowflake01:instance()
+        elseif variant == 2 and self.snowflake02 then
+          particle.artboard = self.snowflake02:instance()
+        elseif variant == 3 and self.snowflake03 then
+          particle.artboard = self.snowflake03:instance()
+        end
+      end
+
       table.insert(particles, particle)
       spawnedThisFrame = spawnedThisFrame + 1
     end
@@ -775,6 +811,12 @@ local function advance(self: SnowflakeParticles, seconds: number): boolean
       p.x = p.baseX + math.sin(p.age * p.driftFreq + p.driftPhase) * p.driftAmp
       p.rotation = p.rotation + p.angularVelocity * seconds
       p.angularVelocity = p.angularVelocity * ROTATION_DECAY
+
+      -- Advance artboard animation (snowflake mode)
+      if p.artboard then
+        p.artboard:advance(seconds)
+      end
+
       i = i + 1
     end
   end
@@ -906,15 +948,26 @@ local function draw(self: SnowflakeParticles, renderer: Renderer)
     renderer:drawPath(self.snowFloorPath, self.snowPaint)
   end
 
-  -- Draw particles using unit path + transforms
+  -- Draw particles using either unit path (rectangles) or artboards (snowflakes)
   local unitPath = self.unitPath
+  local isSnowflakeMode = self.particleShape == 1
 
   for _, p in self.particles do
     renderer:save()
     renderer:transform(Mat2D.withTranslation(p.x, p.y))
     renderer:transform(Mat2D.withRotation(p.rotation))
-    renderer:transform(Mat2D.withScale(p.width, p.height))
-    renderer:drawPath(unitPath, COLOR_PAINTS[p.colorIndex])
+
+    if isSnowflakeMode and p.artboard then
+      -- Snowflake mode: scale and draw artboard
+      -- Use depth-based scaling for size variation (similar to rectangle mode)
+      local scale = p.depth * 0.8  -- Adjust scale factor as needed
+      renderer:transform(Mat2D.withScale(scale, scale))
+      p.artboard:draw(renderer)
+    else
+      -- Rectangle mode: scale and draw unit path
+      renderer:transform(Mat2D.withScale(p.width, p.height))
+      renderer:drawPath(unitPath, COLOR_PAINTS[p.colorIndex])
+    end
     renderer:restore()
   end
 
@@ -1052,9 +1105,15 @@ return function(): Layout<SnowflakeParticles>
     windStrength = 15,
     gustFrequency = 3,
     debugMode = false,
+    -- Particle shape: 0=rectangle, 1=snowflake (default)
+    particleShape = 1,
     -- Canvas dimensions from JS (0 = use resize callback dimensions)
     canvasWidth = 0,
     canvasHeight = 0,
+    -- Snowflake artboard inputs (assigned in Rive Editor)
+    snowflake01 = late(),
+    snowflake02 = late(),
+    snowflake03 = late(),
 
     particles = {},
     topSpawnAccumulator = 0,

@@ -129,6 +129,38 @@
     margin-top: -2px;
 }
 
+.select-control {
+    padding: 4px 0;
+}
+
+.select-control span {
+    display: block;
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+}
+
+.select-control select {
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--panel-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.select-control select:hover {
+    border-color: var(--accent);
+}
+
+.select-control select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.2);
+}
+
 .trigger-btn {
     display: block;
     width: 100%;

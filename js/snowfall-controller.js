@@ -5,11 +5,16 @@ import { log } from './logger.js';
 
 const SNOWFALL_CONFIG = {
     riveFile: './public/rive/snow-fall-particles.riv',
-    fileVersion: 7, // Bump for Layout object syntax
+    fileVersion: 8, // Bump for particleShape enum + snowflake artboard inputs
 };
 
 // Input configurations with proper ranges (derived from Rive script defaults)
 const INPUT_CONFIG = {
+    // Appearance
+    particleShape:        { group: 'Appearance', type: 'enum', options: [
+        { value: 0, label: 'Rectangle' },
+        { value: 1, label: 'Snowflake' },
+    ], default: 1 },
     // Spawning
     topFlowRate:          { min: 0,   max: 100,  step: 1,    group: 'Spawning', type: 'number', default: 15 },
     topVelocity:          { min: 0,   max: 3,    step: 0.1,  group: 'Spawning', type: 'number', default: 0.8 },
@@ -32,7 +37,7 @@ const INPUT_CONFIG = {
     canvasHeight:         { group: 'Internal', type: 'number', hidden: true },
 };
 
-const GROUP_ORDER = ['Spawning', 'Pointer', 'Accumulation', 'Wind', 'Debug'];
+const GROUP_ORDER = ['Appearance', 'Spawning', 'Pointer', 'Accumulation', 'Wind', 'Debug'];
 
 let riveInstance = null;
 let viewModelInstance = null;
@@ -111,7 +116,8 @@ function discoverViewModel() {
     Object.entries(INPUT_CONFIG).forEach(([name, config]) => {
         try {
             let prop = null;
-            if (config.type === 'number') {
+            if (config.type === 'number' || config.type === 'enum') {
+                // enum values are stored as numbers in ViewModel
                 prop = viewModelInstance.number(name);
             } else if (config.type === 'boolean') {
                 prop = viewModelInstance.boolean(name);
@@ -123,7 +129,7 @@ function discoverViewModel() {
 
                 // Initialize with default if value is 0/false and we have a default
                 if (config.default !== undefined) {
-                    if ((config.type === 'number' && prop.value === 0) ||
+                    if (((config.type === 'number' || config.type === 'enum') && prop.value === 0 && config.default !== 0) ||
                         (config.type === 'boolean' && prop.value === false && config.default === true)) {
                         prop.value = config.default;
                         log(`    → Set default: ${config.default}`);
@@ -184,7 +190,9 @@ function buildControls() {
             if (!prop) return; // Skip properties not in ViewModel
             if (config.hidden) return; // Skip hidden properties (internal use only)
 
-            if (config.type === 'boolean') {
+            if (config.type === 'enum') {
+                container.appendChild(createEnumControl(name, prop, config));
+            } else if (config.type === 'boolean') {
                 container.appendChild(createBooleanControl(name, prop, config));
             } else if (config.type === 'number') {
                 container.appendChild(createNumberControl(name, prop, config));
@@ -199,6 +207,38 @@ function buildControls() {
         controlsPanel?.classList.remove('hidden');
         log(`Built ${Object.keys(viewModelProperties).length} controls`);
     }
+}
+
+/**
+ * Create an enum dropdown control
+ */
+function createEnumControl(name, prop, config) {
+    const div = document.createElement('div');
+    div.className = 'select-control';
+
+    const span = document.createElement('span');
+    span.textContent = formatInputName(name);
+
+    const select = document.createElement('select');
+    config.options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        if (prop.value === opt.value) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    });
+
+    select.addEventListener('change', (e) => {
+        const val = parseInt(e.target.value, 10);
+        prop.value = val;
+        log(`Set ${name} = ${config.options.find(o => o.value === val)?.label || val}`);
+    });
+
+    div.appendChild(span);
+    div.appendChild(select);
+    return div;
 }
 
 /**

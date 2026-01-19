@@ -110,6 +110,33 @@ if (prop) prop.value = newValue;
 - Rive `resize()` callback gives artboard size, but JS canvas size may differ
 - See `public/rive/rive-scripts/SnowflakeParticles.luau` for full example
 
+### Adding New Input Types to Snowfall Controller
+
+When adding new input types (beyond `number`, `boolean`, `enum`) to `INPUT_CONFIG` in `snowfall-controller.js`:
+
+1. **Update `discoverViewModel()`** — Add type check for property discovery:
+   ```javascript
+   if (config.type === 'number' || config.type === 'enum' || config.type === 'newType') {
+       prop = viewModelInstance.number(name); // or appropriate accessor
+   }
+   ```
+
+2. **Update default initialization** — If the type has non-zero defaults:
+   ```javascript
+   if (((config.type === 'number' || config.type === 'enum' || config.type === 'newType') && prop.value === 0 && config.default !== 0) || ...)
+   ```
+
+3. **Update `buildControls()`** — Add UI rendering:
+   ```javascript
+   if (config.type === 'newType') {
+       container.appendChild(createNewTypeControl(name, prop, config));
+   }
+   ```
+
+4. **Create control function** — e.g., `createNewTypeControl(name, prop, config)` returning a DOM element
+
+5. **Add CSS** — Style the new control in `css/snowfall.css`
+
 ## Rive Notes
 
 - Runtime: `@rive-app/canvas@2.33.1` for character animation, `@rive-app/webgl@2.34.1` for particles (see config.js header)
@@ -118,6 +145,7 @@ if (prop) prop.value = newValue;
 - Animations need transitions wired in Rive Editor with 100% exit time to prevent loops
 - Use Context7 MCP with `rive-app/rive-docs` for API docs
 - Scene switching uses `riveInstance.reset()` to avoid re-decoding OOB assets
+- **Lua artboard inputs require manual Rive Editor setup** — MCP can add ViewModel properties but cannot link component artboards to Lua script inputs. You must: (1) mark artboards as Components (`Shift+N`), (2) select the Lua script, (3) add artboard inputs in the Inputs panel, (4) assign artboards to inputs, (5) Export
 
 ### Responsive Full-Width/Height Canvas (Fit.Layout)
 
