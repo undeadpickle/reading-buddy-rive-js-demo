@@ -1,6 +1,6 @@
 # Current Status
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-18
 
 ## Progress
 
@@ -22,6 +22,7 @@
 - [x] Project Switcher: Dropdown to switch between demos
 - [x] Snowfall Particles Demo: Lua script particle system with ViewModel binding
 - [x] ViewModel UI Controls: Runtime control of Lua script parameters
+- [x] Snowflake Particle Shapes: Enum input type, dropdown UI, 3 snowflake variants
 
 ### Pending
 - [ ] Phase 5A: Add trig_giggle animation (Rive)
@@ -62,16 +63,16 @@ Key implementation details:
 ## Recent Commits
 
 ```
+0ed8140 Add snowflake particle shapes with dropdown UI
+bbc3b3d Fix snowfall canvas to fill full viewport with Fit.Layout
+fbf680e Add natural snow mounds, disable debug mode by default
+f65f0eb Fix snow floor dimensions bug, extract magic numbers to constants
+5ee3f3f Add mobile bottom sheet to snowfall page, fix project switcher on back nav
+8716370 Fix project switcher paths for GitHub Pages
+60f6150 Refactor: extract utils, centralize constants, update docs
 36fccb0 Add ViewModel UI controls for Snowfall particles
 4cf0611 Add project switcher dropdown and Snowfall Particles demo
 1440aa5 Mobile UI polish: sheet collapse, FAB icon, overlay improvements
-943c9ff Clean up mobile sheet: remove title, auto-scroll to top on close
-3fd96e5 Add floating action button for mobile controls
-dccf4bf Fix bottom sheet click detection on desktop resize
-65304a2 Add mobile bottom sheet for responsive controls
-9270093 Consolidate and trim documentation
-0b65648 Add Epic header with logo to demo page
-9fbcfc9 Optimize scene switching with reset() to avoid re-decoding OOB assets
 ```
 
 ## Files Created/Modified
